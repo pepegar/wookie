@@ -9,17 +9,30 @@ import cats.free.Free
 import ast._
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import cats.data.Kleisli
+import cats.Monad
+import com.amazonaws.transform.Marshaller
+import com.amazonaws.Request
 
 object DynamoDB {
   import interpreter._
   import implicits._
+  import Kleisli._
+
+  type Result[A] = Kleisli[Future, Marshaller[Request[A], A], A]
+
+  implicit val _: Monad[Result] = implicitly
+
   def endpoint = "https://dynamodb.us-east-1.amazonaws.com"
 
   def run[A](op: DynamoDBMonad[A])(
     implicit system: ActorSystem,
-             mat: ActorMaterializer
+             mat: ActorMaterializer,
+             m: Marshaller[Request[A], A]
   ): Future[A] = {
-    op foldMap futureInterpreter(endpoint)
+    val result = op foldMap futureInterpreter(endpoint)
+
+    result.run(m)
   }
 }
 
