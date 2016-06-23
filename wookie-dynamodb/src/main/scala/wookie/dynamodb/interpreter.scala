@@ -11,14 +11,15 @@ import com.amazonaws.Request
 import com.amazonaws.auth.AWSCredentialsProvider
 import com.amazonaws.http.HttpResponseHandler
 import com.amazonaws.transform.Marshaller
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-object interpreter {
+import wookie.{interpreter => i}
+
+object interpreter extends i.Interpreter {
   import ast._
-  import http._
   import marshaller._
   import DynamoDB._
+  import service._
 
   def dynamoDBInterpreter(endpoint: String)(
     implicit
@@ -27,21 +28,8 @@ object interpreter {
   ) = new (DynamoDBOp ~> Result) {
     def apply[A](command: DynamoDBOp[A]): Result[A] =
       Kleisli { marshaller: SignMarshaller[A] =>
-        send(marshaller.marshallAndSign(command.req, marshaller.credentials))(command.responseHandler)
+        send(endpoint, marshaller.marshallAndSign(command.req, marshaller.credentials))(command.responseHandler, system, mat)
       }
-
-    def send[A, B]
-      (request: Request[A])
-      (implicit handler: HttpResponseHandler[AmazonWebServiceResponse[B]]
-    ): Future[B] = {
-      for {
-        httpResponse <- sendRequest(createHttpRequest(request))
-        marshalledResponse <- parseResponse(endpoint, httpResponse)
-      } yield marshalledResponse match {
-        case Xor.Right(resp) => resp
-        case Xor.Left(exc) => throw exc
-      }
-    }
   }
 
 }

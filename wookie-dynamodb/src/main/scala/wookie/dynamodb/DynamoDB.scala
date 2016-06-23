@@ -4,8 +4,6 @@ package dynamodb
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 
-import cats.Monad
-import cats.data.Kleisli
 import com.amazonaws.{ AmazonWebServiceRequest, Request }
 import com.amazonaws.transform.Marshaller
 import com.amazonaws.auth.BasicAWSCredentials
@@ -20,11 +18,6 @@ import marshaller._
 object DynamoDB extends Service with DynamoDBInstructions {
   import interpreter._
   import cats.std.future._
-  import Kleisli._
-
-  type Result[A] = Kleisli[Future, SignMarshaller[A], A]
-
-  implicit val _: Monad[Result] = implicitly
 
   def endpoint = "https://dynamodb.us-east-1.amazonaws.com"
 
