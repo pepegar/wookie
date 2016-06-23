@@ -1,6 +1,6 @@
-organization := "aws"
+organization := "io.github.pepegar"
 
-name := "default"
+name := "wookie"
 
 version := "0.1-SNAPSHOT"
 
@@ -17,12 +17,12 @@ val dependencies = Seq(
 scalacOptions in Test ++= Seq("-Yrangepos")
 
 lazy val core = project
-  .in(file("aws-core"))
+  .in(file("wookie-core"))
   .settings(scalaVersion := sv)
   .settings(libraryDependencies := dependencies)
 
 lazy val dynamodb = project
-  .in(file("aws-dynamodb"))
+  .in(file("wookie-dynamodb"))
   .settings(scalaVersion := sv)
   .settings(libraryDependencies := dependencies)
   .dependsOn(core)

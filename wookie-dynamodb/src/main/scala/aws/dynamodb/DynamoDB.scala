@@ -1,4 +1,4 @@
-package aws
+package wookie
 package dynamodb
 
 import akka.actor.ActorSystem
@@ -12,7 +12,7 @@ import com.amazonaws.auth.BasicAWSCredentials
 
 import scala.concurrent.Future
 
-import aws.service._
+import wookie.service._
 import language._
 import ast._
 import marshaller._

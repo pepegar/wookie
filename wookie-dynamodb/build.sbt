@@ -1,3 +1,3 @@
 organization := "default"
 
-name := "aws-dynamodb"
+name := "wookie-dynamodb"

@@ -1,3 +1,3 @@
 organization := "default"
 
-name := "aws-core"
+name := "wookie-core"

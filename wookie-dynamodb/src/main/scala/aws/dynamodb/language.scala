@@ -1,4 +1,4 @@
-package aws
+package wookie
 package dynamodb
 
 import cats.free.Free

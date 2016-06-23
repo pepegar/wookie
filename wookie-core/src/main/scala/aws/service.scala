@@ -1,4 +1,4 @@
-package aws
+package wookie
 
 object service {
   trait Service {

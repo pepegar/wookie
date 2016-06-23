@@ -1,4 +1,4 @@
-package aws
+package wookie
 
 import java.io.ByteArrayInputStream
 import java.net.{URI, URLEncoder}

@@ -1,18 +1,18 @@
-package aws
+package wookie 
 package dynamodb
 
-import cats.~>
-import cats.data.{Xor, Kleisli}
-import com.amazonaws.AmazonWebServiceRequest
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
-import com.amazonaws.auth.AWSCredentialsProvider
-import com.amazonaws.http.HttpResponseHandler
-import com.amazonaws.AmazonWebServiceResponse
-import com.amazonaws.Request
-import com.amazonaws.transform.Marshaller
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import cats.data.{Xor, Kleisli}
+import cats.~>
+import com.amazonaws.AmazonWebServiceRequest
+import com.amazonaws.AmazonWebServiceResponse
+import com.amazonaws.Request
+import com.amazonaws.auth.AWSCredentialsProvider
+import com.amazonaws.http.HttpResponseHandler
+import com.amazonaws.transform.Marshaller
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 object interpreter {
   import ast._

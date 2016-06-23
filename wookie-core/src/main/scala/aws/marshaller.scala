@@ -1,4 +1,4 @@
-package aws
+package wookie
 
 import com.amazonaws.auth._
 import com.amazonaws.Request

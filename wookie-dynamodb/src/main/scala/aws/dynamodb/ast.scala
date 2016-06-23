@@ -1,4 +1,4 @@
-package aws
+package wookie
 package dynamodb
 
 import com.amazonaws.services.dynamodbv2.model._
