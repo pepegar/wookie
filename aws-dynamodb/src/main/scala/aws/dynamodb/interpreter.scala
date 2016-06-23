@@ -17,6 +17,7 @@ import akka.stream.ActorMaterializer
 object interpreter {
   import ast._
   import http._
+  import marshaller._
   import DynamoDB._
 
   def futureInterpreter(endpoint: String)(
@@ -25,8 +26,8 @@ object interpreter {
     mat: ActorMaterializer
   ) = new (DynamoDBOp ~> Result) {
     def apply[A](command: DynamoDBOp[A]): Result[A] =
-      Kleisli { marshaller: Marshaller[Request[A], AmazonWebServiceRequest] =>
-        send(marshaller.marshall(command.req))(command.responseHandler)
+      Kleisli { marshaller: SignMarshaller[A] =>
+        send(marshaller.marshallAndSign(command.req, marshaller.credentials))(command.responseHandler)
       }
 
     def send[A, B]
