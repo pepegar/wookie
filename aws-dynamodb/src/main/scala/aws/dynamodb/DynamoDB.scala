@@ -36,7 +36,7 @@ object DynamoDB extends Service with DynamoDBInstructions {
               mat: ActorMaterializer,
               m: Marshaller[Request[A], AmazonWebServiceRequest]
   ): Future[A] = {
-    val result = op foldMap futureInterpreter(endpoint)
+    val result = op foldMap dynamoDBInterpreter(endpoint)
 
     result.run(SignMarshaller[A](endpoint, credentials))
   }

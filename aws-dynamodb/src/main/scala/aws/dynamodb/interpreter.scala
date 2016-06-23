@@ -20,7 +20,7 @@ object interpreter {
   import marshaller._
   import DynamoDB._
 
-  def futureInterpreter(endpoint: String)(
+  def dynamoDBInterpreter(endpoint: String)(
     implicit
     system: ActorSystem,
     mat: ActorMaterializer
