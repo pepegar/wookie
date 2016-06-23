@@ -1,5 +1,4 @@
 package aws
-package dynamodb
 
 import com.amazonaws.auth._
 import com.amazonaws.Request
@@ -32,10 +31,13 @@ object marshaller {
 
   object SignMarshaller {
 
-    def apply[A](e: String, c: AWSCredentials)(implicit m: Marshaller[Request[A], AmazonWebServiceRequest]) = new SignMarshaller[A] {
+    def apply[A]
+      (e: String, c: AWSCredentials)
+      (implicit M: Marshaller[Request[A], AmazonWebServiceRequest]
+    ): SignMarshaller[A] = new SignMarshaller[A] {
       def endpoint = e
       def credentials = c
-      def marshaller = m
+      def marshaller = M
     }
 
   }
