@@ -1,3 +1,3 @@
-organization := "default"
+organization := "io.github.pepegar"
 
 name := "wookie-dynamodb"

@@ -1,3 +1,3 @@
 organization := "io.github.pepegar"
 
-name := "wookie-core"
+name := "wookie-s3"
