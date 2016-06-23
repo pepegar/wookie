@@ -6,8 +6,7 @@ import akka.stream.ActorMaterializer
 
 import cats.Monad
 import cats.data.Kleisli
-
-import com.amazonaws.Request
+import com.amazonaws.{ AmazonWebServiceRequest, Request }
 import com.amazonaws.transform.Marshaller
 
 import scala.concurrent.Future
@@ -17,10 +16,10 @@ import ast._
 
 object DynamoDB extends DynamoDBInstructions {
   import interpreter._
-  import implicits._
+  import cats.std.future._
   import Kleisli._
 
-  type Result[A] = Kleisli[Future, Marshaller[Request[A], A], A]
+  type Result[A] = Kleisli[Future, Marshaller[Request[A], AmazonWebServiceRequest], A]
 
   implicit val _: Monad[Result] = implicitly
 
@@ -29,7 +28,7 @@ object DynamoDB extends DynamoDBInstructions {
   def run[A](op: DynamoDBMonad[A])(
     implicit system: ActorSystem,
              mat: ActorMaterializer,
-             m: Marshaller[Request[A], A]
+             m: Marshaller[Request[A], AmazonWebServiceRequest]
   ): Future[A] = {
     val result = op foldMap futureInterpreter(endpoint)
 
