@@ -1,4 +1,4 @@
-aws (waiting for a new name...)
-===
+wookie
+======
 
 Purely functional library for connecting to AWS with Scala.
