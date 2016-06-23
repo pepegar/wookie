@@ -4,14 +4,12 @@ package dynamodb
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.services.dynamodbv2.model.transform._
 import com.amazonaws.transform.Marshaller
-import com.amazonaws.{AmazonWebServiceRequest, AmazonWebServiceResponse, Request}
-import com.amazonaws.http.{HttpResponseHandler, JsonErrorResponseHandler, JsonResponseHandler}
+import com.amazonaws.AmazonWebServiceRequest
+import com.amazonaws.http.JsonResponseHandler
 import cats.free.Free
 
 object ast {
-  trait Marshallable[A] {
-    def responseHandler: HttpResponseHandler[AmazonWebServiceResponse[A]]
-  }
+  import marshaller.Marshallable
 
   sealed abstract class DynamoDBOp[A]
     extends Marshallable[A] with Product with Serializable {

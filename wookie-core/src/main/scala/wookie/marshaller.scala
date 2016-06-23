@@ -1,11 +1,15 @@
 package wookie
 
 import com.amazonaws.auth._
-import com.amazonaws.Request
-import com.amazonaws.{ AmazonWebServiceRequest, Request }
+import com.amazonaws.{ AmazonWebServiceRequest, Request, AmazonWebServiceResponse }
 import com.amazonaws.transform.Marshaller
+import com.amazonaws.http.{HttpResponseHandler, JsonErrorResponseHandler, JsonResponseHandler}
 
 object marshaller {
+  trait Marshallable[A] {
+    def responseHandler: HttpResponseHandler[AmazonWebServiceResponse[A]]
+  }
+
   trait SignMarshaller[A] {
     def marshaller:  Marshaller[Request[A], AmazonWebServiceRequest]
 
