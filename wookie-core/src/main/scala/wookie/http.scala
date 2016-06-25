@@ -1,26 +1,26 @@
 package wookie
 
 import java.io.ByteArrayInputStream
-import java.net.{URI, URLEncoder}
+import java.net.{ URI, URLEncoder }
 
 import cats.data.Xor
 
-import akka.actor.{ActorSystem, _}
+import akka.actor.{ ActorSystem, _ }
 import akka.event.LoggingAdapter
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.client.RequestBuilding._
 import akka.http.scaladsl.model.MediaType.NotCompressible
 import akka.http.scaladsl.model.headers.RawHeader
-import akka.http.scaladsl.model.{MediaType, _}
+import akka.http.scaladsl.model.{ MediaType, _ }
 import akka.http.scaladsl.settings.ClientConnectionSettings
 import akka.stream.ActorMaterializer
 import akka.stream.scaladsl._
-import akka.util.{ByteString, Timeout}
+import akka.util.{ ByteString, Timeout }
 
 import com.amazonaws.auth._
-import com.amazonaws.http.{HttpMethodName, HttpResponseHandler, HttpResponse => AWSHttpResponse}
+import com.amazonaws.http.{ HttpMethodName, HttpResponseHandler, HttpResponse => AWSHttpResponse }
 import com.amazonaws.transform.Marshaller
-import com.amazonaws.{AmazonServiceException, AmazonWebServiceResponse, DefaultRequest, Request}
+import com.amazonaws.{ AmazonServiceException, AmazonWebServiceResponse, DefaultRequest, Request }
 
 import scala.collection.JavaConverters._
 import scala.concurrent.{ Future, ExecutionContext }
@@ -58,20 +58,21 @@ object http {
         Uri(path = Uri.Path(path)),
         headers(request),
         HttpEntity(mediaType, body),
-        HttpProtocols.`HTTP/1.1`)
+        HttpProtocols.`HTTP/1.1`
+      )
     } else {
       val method: HttpMethod = request.getHttpMethod
       method match {
         case HttpMethods.POST => {
           headers(request) match {
             case Nil => Post(path, formData(request))
-            case x :: xs => Post(path, formData(request)) ~> addHeaders(x, xs:_*)
+            case x :: xs => Post(path, formData(request)) ~> addHeaders(x, xs: _*)
           }
         }
         case HttpMethods.PUT =>
           headers(request) match {
             case Nil => Put(path, formData(request))
-            case x :: xs => Put(path, formData(request)) ~> addHeaders(x, xs:_*)
+            case x :: xs => Put(path, formData(request)) ~> addHeaders(x, xs: _*)
           }
         case method =>
           val uri = Uri(path = Uri.Path(path)).withRawQueryString(encodeQuery(request))
@@ -81,14 +82,16 @@ object http {
   }
 
   def sendRequest(req: HttpRequest)(
-    implicit system: ActorSystem,
-             mat: ActorMaterializer
+    implicit
+    system: ActorSystem,
+    mat: ActorMaterializer
   ): Future[HttpResponse] = Http().singleRequest(req)
 
   def parseResponse[T](serviceName: String, response: HttpResponse)(
-    implicit handler: HttpResponseHandler[AmazonWebServiceResponse[T]],
-             system: ActorSystem,
-             mat:    ActorMaterializer
+    implicit
+    handler: HttpResponseHandler[AmazonWebServiceResponse[T]],
+    system: ActorSystem,
+    mat: ActorMaterializer
   ): Future[AmazonServiceException Xor T] = {
     implicit val ec = system.dispatcher
     val req = new DefaultRequest[T](serviceName)

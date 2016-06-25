@@ -18,13 +18,10 @@ import http._
 object interpreter {
   trait Interpreter {
 
-    def send[A, B]
-      (endpoint: String, request: Request[A])
-      (implicit
-       handler: HttpResponseHandler[AmazonWebServiceResponse[B]],
-       system: ActorSystem,
-       mat: ActorMaterializer
-    ): Future[B] = {
+    def send[A, B](endpoint: String, request: Request[A])(implicit
+      handler: HttpResponseHandler[AmazonWebServiceResponse[B]],
+      system: ActorSystem,
+      mat: ActorMaterializer): Future[B] = {
       for {
         httpResponse <- sendRequest(createHttpRequest(request))
         marshalledResponse <- parseResponse(endpoint, httpResponse)

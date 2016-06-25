@@ -20,12 +20,10 @@ object S3 extends Service {
 
   def credentials = new BasicAWSCredentials("", "")
 
-  def run[A]
-    (op: S3Monad[A])
-    (implicit system: ActorSystem,
-              mat: ActorMaterializer,
-              m: Marshaller[Request[A], AmazonWebServiceRequest]
-  ): Future[A] = {
+  def run[A](op: S3Monad[A])(implicit
+    system: ActorSystem,
+    mat: ActorMaterializer,
+    m: Marshaller[Request[A], AmazonWebServiceRequest]): Future[A] = {
     val result = op foldMap s3Interpreter(endpoint)
 
     result.run(SignMarshaller[A](endpoint, credentials))

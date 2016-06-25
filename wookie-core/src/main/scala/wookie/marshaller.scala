@@ -3,7 +3,7 @@ package wookie
 import com.amazonaws.auth._
 import com.amazonaws.{ AmazonWebServiceRequest, Request, AmazonWebServiceResponse }
 import com.amazonaws.transform.Marshaller
-import com.amazonaws.http.{HttpResponseHandler, JsonErrorResponseHandler, JsonResponseHandler}
+import com.amazonaws.http.{ HttpResponseHandler, JsonErrorResponseHandler, JsonResponseHandler }
 
 object marshaller {
   trait Marshallable[A] {
@@ -11,7 +11,7 @@ object marshaller {
   }
 
   trait SignMarshaller[A] {
-    def marshaller:  Marshaller[Request[A], AmazonWebServiceRequest]
+    def marshaller: Marshaller[Request[A], AmazonWebServiceRequest]
 
     def endpoint: String
 
@@ -35,10 +35,7 @@ object marshaller {
 
   object SignMarshaller {
 
-    def apply[A]
-      (e: String, c: AWSCredentials)
-      (implicit M: Marshaller[Request[A], AmazonWebServiceRequest]
-    ): SignMarshaller[A] = new SignMarshaller[A] {
+    def apply[A](e: String, c: AWSCredentials)(implicit M: Marshaller[Request[A], AmazonWebServiceRequest]): SignMarshaller[A] = new SignMarshaller[A] {
       def endpoint = e
       def credentials = c
       def marshaller = M

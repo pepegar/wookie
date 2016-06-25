@@ -23,12 +23,10 @@ object DynamoDB extends Service with DynamoDBInstructions {
 
   def credentials = new BasicAWSCredentials("", "")
 
-  def run[A]
-    (op: DynamoDBMonad[A])
-    (implicit system: ActorSystem,
-              mat: ActorMaterializer,
-              m: Marshaller[Request[A], AmazonWebServiceRequest]
-  ): Future[A] = {
+  def run[A](op: DynamoDBMonad[A])(implicit
+    system: ActorSystem,
+    mat: ActorMaterializer,
+    m: Marshaller[Request[A], AmazonWebServiceRequest]): Future[A] = {
     val result = op foldMap dynamoDBInterpreter(endpoint)
 
     result.run(SignMarshaller[A](endpoint, credentials))

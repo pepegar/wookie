@@ -13,46 +13,46 @@ object ast {
 
   def defaultHandler = new S3XmlResponseHandler[Unit](null)
 
-  sealed abstract class S3Op[A] 
-    extends Marshallable[A] with Product with Serializable {
+  sealed abstract class S3Op[A]
+      extends Marshallable[A] with Product with Serializable {
     def req: AmazonWebServiceRequest
   }
 
   case class ListBuckets(req: ListBucketsRequest)
-    extends S3Op[java.util.List[Bucket]]
-    with Marshallable[java.util.List[Bucket]] {
-      def responseHandler = new S3XmlResponseHandler[java.util.List[Bucket]](new Unmarshallers.ListBucketsUnmarshaller)
-    }
+      extends S3Op[java.util.List[Bucket]]
+      with Marshallable[java.util.List[Bucket]] {
+    def responseHandler = new S3XmlResponseHandler[java.util.List[Bucket]](new Unmarshallers.ListBucketsUnmarshaller)
+  }
   case class CreateBucket(req: CreateBucketRequest)
-    extends S3Op[Unit]
-    with Marshallable[Unit] {
-      def responseHandler = defaultHandler
-    }
+      extends S3Op[Unit]
+      with Marshallable[Unit] {
+    def responseHandler = defaultHandler
+  }
   case class DeleteBucket(req: DeleteBucketRequest)
-    extends S3Op[Unit]
-    with Marshallable[Unit] {
-      def responseHandler = defaultHandler
-    }
+      extends S3Op[Unit]
+      with Marshallable[Unit] {
+    def responseHandler = defaultHandler
+  }
   case class PutObject(req: PutObjectRequest)
-    extends S3Op[ObjectMetadata]
-    with Marshallable[ObjectMetadata] {
-      def responseHandler = new S3MetadataResponseHandler()
-    }
+      extends S3Op[ObjectMetadata]
+      with Marshallable[ObjectMetadata] {
+    def responseHandler = new S3MetadataResponseHandler()
+  }
   case class GetObject(req: GetObjectRequest)
-    extends S3Op[S3Object]
-    with Marshallable[S3Object] {
-      def responseHandler = new S3ObjectResponseHandler()
-    }
+      extends S3Op[S3Object]
+      with Marshallable[S3Object] {
+    def responseHandler = new S3ObjectResponseHandler()
+  }
   case class DeleteObject(req: DeleteObjectRequest)
-    extends S3Op[Unit]
-    with Marshallable[Unit] {
-      def responseHandler = defaultHandler
-    }
+      extends S3Op[Unit]
+      with Marshallable[Unit] {
+    def responseHandler = defaultHandler
+  }
   case class ListObjects(req: ListObjectsRequest)
-    extends S3Op[ObjectListing]
-    with Marshallable[ObjectListing] {
-      def responseHandler = new S3XmlResponseHandler[ObjectListing](new Unmarshallers.ListObjectsUnmarshaller)
-    }
+      extends S3Op[ObjectListing]
+      with Marshallable[ObjectListing] {
+    def responseHandler = new S3XmlResponseHandler[ObjectListing](new Unmarshallers.ListObjectsUnmarshaller)
+  }
 
   type S3Monad[A] = Free[S3Op, A]
 }

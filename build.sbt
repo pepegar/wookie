@@ -1,3 +1,7 @@
+import scalariform.formatter.preferences._
+import com.typesafe.sbt.SbtScalariform
+import com.typesafe.sbt.SbtScalariform.ScalariformKeys
+
 organization := "io.github.pepegar"
 
 name := "wookie"
@@ -13,6 +17,16 @@ val dependencies = Seq(
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
+
+SbtScalariform.scalariformSettings
+
+ScalariformKeys.preferences := ScalariformKeys.preferences.value
+  .setPreference(RewriteArrowSymbols, true)
+  .setPreference(AlignParameters, true)
+  .setPreference(AlignSingleLineCaseStatements, true)
+  .setPreference(DoubleIndentClassDeclaration, true)
+  .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 
 lazy val core = project
   .in(file("wookie-core"))

@@ -1,9 +1,9 @@
-package wookie 
+package wookie
 package dynamodb
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import cats.data.{Xor, Kleisli}
+import cats.data.{ Xor, Kleisli }
 import cats.~>
 import com.amazonaws.AmazonWebServiceRequest
 import com.amazonaws.AmazonWebServiceResponse
@@ -13,7 +13,7 @@ import com.amazonaws.http.HttpResponseHandler
 import com.amazonaws.transform.Marshaller
 import scala.concurrent.Future
 
-import wookie.{interpreter => i}
+import wookie.{ interpreter => i }
 
 object interpreter extends i.Interpreter {
   import ast._

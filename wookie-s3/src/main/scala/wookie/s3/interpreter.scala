@@ -1,7 +1,7 @@
 package wookie
 package s3
 
-import cats.data.{Xor, Kleisli}
+import cats.data.{ Xor, Kleisli }
 import cats.~>
 
 import akka.actor.ActorSystem
@@ -11,7 +11,7 @@ import ast._
 import service._
 import marshaller._
 
-import wookie.{interpreter => i}
+import wookie.{ interpreter => i }
 
 object interpreter extends i.Interpreter {
 
@@ -20,8 +20,8 @@ object interpreter extends i.Interpreter {
     system: ActorSystem,
     mat: ActorMaterializer
   ) = new (S3Op ~> Result) {
-  
-    def apply[A](command: S3Op[A]): Result[A] = 
+
+    def apply[A](command: S3Op[A]): Result[A] =
       Kleisli { marshaller: SignMarshaller[A] =>
         send(endpoint, marshaller.marshallAndSign(command.req, marshaller.credentials))(command.responseHandler, system, mat)
       }
