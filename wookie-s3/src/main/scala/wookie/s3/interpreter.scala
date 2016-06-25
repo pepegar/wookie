@@ -8,7 +8,7 @@ import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 
 import ast._
-import service._
+import result._
 import marshaller._
 
 object interpreter extends Interpreter {

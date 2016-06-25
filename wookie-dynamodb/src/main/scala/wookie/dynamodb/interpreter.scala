@@ -17,7 +17,7 @@ object interpreter extends Interpreter {
   import ast._
   import marshaller._
   import DynamoDB._
-  import service._
+  import result._
 
   def dynamoDBInterpreter(endpoint: String)(
     implicit

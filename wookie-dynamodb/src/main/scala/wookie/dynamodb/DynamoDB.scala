@@ -10,7 +10,8 @@ import com.amazonaws.auth.BasicAWSCredentials
 
 import scala.concurrent.Future
 
-import wookie.service._
+import result._
+import service._
 import language._
 import ast._
 import marshaller._

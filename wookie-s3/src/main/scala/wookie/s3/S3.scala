@@ -13,7 +13,7 @@ object S3 extends Service {
 
   import ast._
   import interpreter._
-  import service._
+  import result._
   import marshaller._
 
   val endpoint = "https://s3.amazonaws.com"
