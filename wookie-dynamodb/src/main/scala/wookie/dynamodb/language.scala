@@ -8,7 +8,7 @@ import com.amazonaws.services.dynamodbv2.model._
 import ast._
 
 object language {
-  trait Instructions[P[_]] {
+  trait Ops[P[_]] {
     def listTables(req: ListTablesRequest): P[ListTablesResult]
     def query(req: QueryRequest): P[QueryResult]
     def scan(req: ScanRequest): P[ScanResult]
@@ -24,7 +24,7 @@ object language {
     def deleteItem(req: DeleteItemRequest): P[DeleteItemResult]
   }
 
-  trait DynamoDBInstructions extends Instructions[DynamoDBMonad] {
+  object Ops extends Ops[DynamoDBMonad] {
     def listTables(req: ListTablesRequest) = Free.liftF(ListTables(req))
     def query(req: QueryRequest) = Free.liftF(Query(req))
     def scan(req: ScanRequest) = Free.liftF(Scan(req))

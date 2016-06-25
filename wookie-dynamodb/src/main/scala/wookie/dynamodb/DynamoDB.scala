@@ -16,7 +16,7 @@ import language._
 import ast._
 import marshaller._
 
-object DynamoDB extends Service with DynamoDBInstructions {
+object DynamoDB extends Service {
   import interpreter._
   import cats.std.future._
 
