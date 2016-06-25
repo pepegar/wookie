@@ -15,20 +15,18 @@ import cats.data.Xor
 
 import http._
 
-object interpreter {
-  trait Interpreter {
+trait Interpreter {
 
-    def send[A, B](endpoint: String, request: Request[A])(implicit
-      handler: HttpResponseHandler[AmazonWebServiceResponse[B]],
-      system: ActorSystem,
-      mat: ActorMaterializer): Future[B] = {
-      for {
-        httpResponse <- sendRequest(createHttpRequest(request))
-        marshalledResponse <- parseResponse(endpoint, httpResponse)
-      } yield marshalledResponse match {
-        case Xor.Right(resp) => resp
-        case Xor.Left(exc) => throw exc
-      }
+  def send[A, B](endpoint: String, request: Request[A])(implicit
+    handler: HttpResponseHandler[AmazonWebServiceResponse[B]],
+    system: ActorSystem,
+    mat: ActorMaterializer): Future[B] = {
+    for {
+      httpResponse <- sendRequest(createHttpRequest(request))
+      marshalledResponse <- parseResponse(endpoint, httpResponse)
+    } yield marshalledResponse match {
+      case Xor.Right(resp) => resp
+      case Xor.Left(exc) => throw exc
     }
   }
 }

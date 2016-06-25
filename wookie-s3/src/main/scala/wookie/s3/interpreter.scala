@@ -11,9 +11,7 @@ import ast._
 import service._
 import marshaller._
 
-import wookie.{ interpreter => i }
-
-object interpreter extends i.Interpreter {
+object interpreter extends Interpreter {
 
   def s3Interpreter(endpoint: String)(
     implicit

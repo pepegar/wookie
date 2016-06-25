@@ -13,9 +13,7 @@ import com.amazonaws.http.HttpResponseHandler
 import com.amazonaws.transform.Marshaller
 import scala.concurrent.Future
 
-import wookie.{ interpreter => i }
-
-object interpreter extends i.Interpreter {
+object interpreter extends Interpreter {
   import ast._
   import marshaller._
   import DynamoDB._
