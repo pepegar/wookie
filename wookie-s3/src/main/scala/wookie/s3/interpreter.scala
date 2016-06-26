@@ -20,8 +20,8 @@ object interpreter extends Interpreter {
   ) = new (S3Op ~> Result) {
 
     def apply[A](command: S3Op[A]): Result[A] =
-      Kleisli { marshaller: SignMarshaller[A] =>
-        send(endpoint, marshaller.marshallAndSign(command.req, marshaller.credentials))(command.responseHandler, system, mat)
+      Kleisli { signer: Signer[A] =>
+        send(endpoint, signer.sign(command.req))(command.responseHandler, system, mat)
       }
 
   }

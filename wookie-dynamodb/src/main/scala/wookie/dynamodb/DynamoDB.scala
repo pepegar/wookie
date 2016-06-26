@@ -26,10 +26,9 @@ object DynamoDB extends Service {
 
   def run[A](op: DynamoDBMonad[A])(implicit
     system: ActorSystem,
-    mat: ActorMaterializer,
-    m: Marshaller[Request[A], AmazonWebServiceRequest]): Future[A] = {
+    mat: ActorMaterializer): Future[A] = {
     val result = op foldMap dynamoDBInterpreter(endpoint)
 
-    result.run(SignMarshaller[A](endpoint, credentials))
+    result.run(Signer[A](endpoint, credentials))
   }
 }

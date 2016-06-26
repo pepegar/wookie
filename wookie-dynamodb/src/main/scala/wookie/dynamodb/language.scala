@@ -6,6 +6,7 @@ import cats.free.Free
 import com.amazonaws.services.dynamodbv2.model._
 
 import ast._
+import implicits._
 
 object language {
   trait Ops[P[_]] {

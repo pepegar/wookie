@@ -25,8 +25,8 @@ object interpreter extends Interpreter {
     mat: ActorMaterializer
   ) = new (DynamoDBOp ~> Result) {
     def apply[A](command: DynamoDBOp[A]): Result[A] =
-      Kleisli { marshaller: SignMarshaller[A] =>
-        send(endpoint, marshaller.marshallAndSign(command.req, marshaller.credentials))(command.responseHandler, system, mat)
+      Kleisli { signer: Signer[A] =>
+        send(endpoint, signer.sign(command.req))(command.responseHandler, system, mat)
       }
   }
 

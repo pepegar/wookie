@@ -19,7 +19,6 @@ import akka.util.{ ByteString, Timeout }
 
 import com.amazonaws.auth._
 import com.amazonaws.http.{ HttpMethodName, HttpResponseHandler, HttpResponse => AWSHttpResponse }
-import com.amazonaws.transform.Marshaller
 import com.amazonaws.{ AmazonServiceException, AmazonWebServiceResponse, DefaultRequest, Request }
 
 import scala.collection.JavaConverters._

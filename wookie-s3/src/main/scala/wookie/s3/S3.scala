@@ -22,11 +22,10 @@ object S3 extends Service {
 
   def run[A](op: S3Monad[A])(implicit
     system: ActorSystem,
-    mat: ActorMaterializer,
-    m: Marshaller[Request[A], AmazonWebServiceRequest]): Future[A] = {
+    mat: ActorMaterializer): Future[A] = {
     val result = op foldMap s3Interpreter(endpoint)
 
-    result.run(SignMarshaller[A](endpoint, credentials))
+    result.run(Signer[A](endpoint, credentials))
   }
 
 }

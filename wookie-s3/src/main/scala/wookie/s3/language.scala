@@ -8,6 +8,7 @@ import cats.free._
 object language {
 
   import ast._
+  import implicits._
 
   trait Ops[P[_]] {
     def listBuckets(req: ListBucketsRequest): P[java.util.List[Bucket]]
