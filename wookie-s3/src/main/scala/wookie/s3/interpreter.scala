@@ -9,9 +9,11 @@ import akka.stream.ActorMaterializer
 
 import ast._
 import result._
-import marshaller._
+import signer._
 
 object interpreter extends Interpreter {
+
+  def serviceName: String = "s3"
 
   def s3Interpreter(endpoint: String)(
     implicit

@@ -9,7 +9,8 @@ import com.amazonaws.http.JsonResponseHandler
 import cats.free.Free
 
 object ast {
-  import marshaller.Marshallable
+
+  import marshallable._
 
   sealed abstract class DynamoDBOp[A]
       extends Marshallable[A] with Product with Serializable {

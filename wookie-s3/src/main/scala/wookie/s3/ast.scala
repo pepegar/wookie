@@ -10,7 +10,7 @@ import com.amazonaws.services.s3.internal.{ Constants, S3XmlResponseHandler }
 import com.amazonaws.services.s3.internal.{ S3ErrorResponseHandler, S3MetadataResponseHandler, S3ObjectResponseHandler }
 
 object ast {
-  import marshaller.Marshallable
+  import marshallable._
 
   type MM[A] = Marshaller[Request[A], A]
 
