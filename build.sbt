@@ -16,6 +16,23 @@ val dependencies = Seq(
   "org.specs2" %% "specs2-core" % "3.8.4" % "test"
 )
 
+val commonSettings = Seq(
+  scalacOptions ++= Seq(
+    "-encoding", "UTF-8", // 2 args
+    "-feature",
+    "-language:existentials",
+    "-language:higherKinds",
+    "-language:postfixOps",
+    "-language:implicitConversions",
+    "-language:experimental.macros",
+    "-unchecked",
+    "-Xlint",
+    "-Yno-adapted-args",
+    "-Ywarn-dead-code",
+    "-Ywarn-value-discard"
+  )
+)
+
 scalacOptions in Test ++= Seq("-Yrangepos")
 
 SbtScalariform.scalariformSettings
@@ -30,6 +47,7 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
 
 lazy val core = project
   .in(file("wookie-core"))
+  .settings(commonSettings)
   .settings(scalaVersion := sv)
   .settings(libraryDependencies := dependencies)
   .settings(libraryDependencies ++= Seq(
@@ -38,12 +56,14 @@ lazy val core = project
 
 lazy val dynamodb = project
   .in(file("wookie-dynamodb"))
+  .settings(commonSettings)
   .settings(scalaVersion := sv)
   .settings(libraryDependencies := dependencies)
   .dependsOn(core)
 
 lazy val s3 = project
   .in(file("wookie-s3"))
+  .settings(commonSettings)
   .settings(scalaVersion := sv)
   .settings(libraryDependencies := dependencies)
   .dependsOn(core)
