@@ -17,13 +17,15 @@ import http._
 
 trait Interpreter {
 
+  def serviceName: String
+
   def send[A, B](endpoint: String, request: Request[A])(implicit
     handler: HttpResponseHandler[AmazonWebServiceResponse[B]],
     system: ActorSystem,
     mat: ActorMaterializer): Future[B] = {
     for {
       httpResponse <- sendRequest(createHttpRequest(request))
-      marshalledResponse <- parseResponse(endpoint, httpResponse)
+      marshalledResponse <- parseResponse(serviceName, httpResponse)
     } yield marshalledResponse match {
       case Xor.Right(resp) => resp
       case Xor.Left(exc) => throw exc

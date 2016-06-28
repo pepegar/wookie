@@ -54,7 +54,7 @@ object http {
       val mediaType = MediaType.customBinary(main, secondary, NotCompressible)
       HttpRequest(
         request.getHttpMethod,
-        Uri(path = Uri.Path(path)),
+        Uri(request.getEndpoint.toString),
         headers(request),
         HttpEntity(mediaType, body),
         HttpProtocols.`HTTP/1.1`

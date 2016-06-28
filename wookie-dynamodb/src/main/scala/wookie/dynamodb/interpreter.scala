@@ -15,9 +15,11 @@ import scala.concurrent.Future
 
 object interpreter extends Interpreter {
   import ast._
-  import marshaller._
+  import signer._
   import DynamoDB._
   import result._
+
+  def serviceName: String = "dynamodb"
 
   def dynamoDBInterpreter(endpoint: String)(
     implicit
