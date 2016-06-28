@@ -1,13 +1,14 @@
 package wookie
 package s3
 
-import service.Service
 import scala.concurrent.Future
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.amazonaws.transform._
 import com.amazonaws._
 import com.amazonaws.auth.BasicAWSCredentials
+
+import service._
 
 case class S3(props: Properties) extends Service {
 
