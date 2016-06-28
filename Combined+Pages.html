@@ -43,7 +43,7 @@
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="#wookie">wookie</a></div><ol class="toc"> <li><div><a href="#Rationale">Rationale</a></div></li><li><div><a href="#DynamoDB">DynamoDB</a></div><ol class="toc">  </ol></li> </ol></div></div><h1 id="wookie">wookie<a href="#wookie" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>wookie is a library for using <a href="https://aws.amazon.com/es/">Amazon Web Services</a>
+      <div><a href="#wookie">wookie</a></div><ol class="toc"> <li><div><a href="#Rationale">Rationale</a></div></li><li><div><a href="#DynamoDB">DynamoDB</a></div><ol class="toc">  </ol></li><li><div><a href="#Structure">Structure</a></div></li><li><div><a href="#DynamoDB">DynamoDB</a></div><ol class="toc">  </ol></li> </ol></div></div><h1 id="wookie">wookie<a href="#wookie" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>wookie is a library for using <a href="https://aws.amazon.com/es/">Amazon Web Services</a>
 services from Scala.
 </p><h2 id="add+to+your+project">add to your project<a href="#add+to+your+project" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><pre><code class="">&quot;io.pepegar.gihub&quot; %% &quot;wookie-core&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre><p>Each one of the AWS Services are in its own isolated project, and they follow
@@ -64,6 +64,39 @@ the following clients:
 follows:
 </p><pre><code class="prettyprint lang-scala">def interpret[A](op: DynamoDBOp[A]): Future[A]
 </code></pre><h1 id="DynamoDB">DynamoDB<a href="#DynamoDB" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><h2 id="Install">Install<a href="#Install" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>In order to use DynamoDB, you need to add <code>wookie-dynamodb</code> artifact to your
+<code>build.sbt</code> file.
+</p><pre><code class="">&quot;io.github.pepegar&quot; %% &quot;wookie-dynamodb&quot; % &quot;0.1-SNAPSHOT&quot;
+</code></pre><h2 id="Use">Use<a href="#Use" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can use the <code>Ops</code> typeclass, located in <code>language</code> package.  It provides 
+convenient functions to generate request values for DynamoDB.
+</p><pre><code class="prettyprint lang-scala">import wookie.dynamodb.implicits._
+import wookie.dynamodb.language.Ops
+import wookie.dynamodb.DynamoDB
+import wookie.service.Properties
+import com.amazonaws.services.dynamodbv2.model.ListTablesRequest
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+
+val props = Properties(&quot;accessKey&quot;, &quot;secretAccessKey&quot;)
+implicit val system = ActorSystem(&quot;wookie&quot;)
+implicit val mat = ActorMaterializer()
+
+val listTables = Ops.listTables(new ListTablesRequest)
+
+val result = DynamoDB(props).run(listTables)
+</code></pre><h1 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>We’ve tried to follow an homogeneous structure through all the project.
+</p><h2 id="Services">Services<a href="#Services" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><ul><li>Each service is a different artifact
+</li><li>each one of them provide the following packages:
+</li><li><code>ast</code> which contains the Algebraic Data Type of the service. this algebraic
+data type contains all operations that can be done to the given service.
+</li><li><code>interpreter</code> an interpreter of the ADT.
+</li><li><code>ServiceName</code> object.  Wires up all parts of the service into one small
+object that provides a <code>run</code> method.  This method transforms a <code>SercviceOp[A]</code>
+into the target <code>Monad</code>.
+</li><li><code>language</code> where the typeclass of the service is defined and implemented.
+</li><li><code>implicits</code> contains all the implicits related to the underlying <code>aws-java</code>
+project.  All our services calls need a <code>Marshaller[Request[A], A]</code>, where <code>A</code>
+is our request type, and a response handler.
+</li></ul><h1 id="DynamoDB">DynamoDB<a href="#DynamoDB" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><h2 id="Install">Install<a href="#Install" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>In order to use DynamoDB, you need to add <code>wookie-dynamodb</code> artifact to your
 <code>build.sbt</code> file.
 </p><pre><code class="">&quot;io.github.pepegar&quot; %% &quot;wookie-dynamodb&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre><h2 id="Use">Use<a href="#Use" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can use the <code>Ops</code> typeclass, located in <code>language</code> package.  It provides 

@@ -1,9 +1,9 @@
 <!DOCTYPE html SYSTEM "about:legacy-compat">
-<html>
+<html manifest="pamflet.manifest">
       <head>
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
-        <title>wookie — Contents in Depth</title>
+        <title>wookie — Structure</title>
         
         <link rel="stylesheet" href="css/blueprint/screen.css" type="text/css" media="screen, projection"/>
         <link rel="stylesheet" href="css/blueprint/grid.css" type="text/css" media="screen and (min-device-width: 800px), projection"/>
@@ -33,18 +33,36 @@
         <a class="page prev nav" href="dynamodb.html">
             <span class="space">&nbsp;</span>
             <span class="flip arrow">❧</span>
-          </a><a class="page next nav" href="Combined+Pages.html">
+          </a><a class="page next nav" href="dynamodb.html">
             <span class="space">&nbsp;</span>
             <span class="arrow">❧</span>
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <div class="tocwrapper show">
+            <h1 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>We’ve tried to follow an homogeneous structure through all the project.
+</p><h2 id="Services">Services<a href="#Services" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><ul><li>Each service is a different artifact
+</li><li>each one of them provide the following packages:
+</li><li><code>ast</code> which contains the Algebraic Data Type of the service. this algebraic
+data type contains all operations that can be done to the given service.
+</li><li><code>interpreter</code> an interpreter of the ADT.
+</li><li><code>ServiceName</code> object.  Wires up all parts of the service into one small
+object that provides a <code>run</code> method.  This method transforms a <code>SercviceOp[A]</code>
+into the target <code>Monad</code>.
+</li><li><code>language</code> where the typeclass of the service is defined and implemented.
+</li><li><code>implicits</code> contains all the implicits related to the underlying <code>aws-java</code>
+project.  All our services calls need a <code>Marshaller[Request[A], A]</code>, where <code>A</code>
+is our request type, and a response handler.
+</li></ul><div class="bottom nav span-16">
+                        <em>Next Page</em>
+                        <span class="arrow">❧</span>
+                        <a href="dynamodb.html"> DynamoDB </a>                        
+                        
+                      </div><div class="tocwrapper show">
       <a class="tochead nav" style="display: none" href="#toc">❦</a>
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="index.html">wookie</a></div><ul class="outline"> <li> <a href="index.html#add+to+your+project">add to your project </a> </li><li> <a href="index.html#Currently+implemented+services">Currently implemented services </a> </li> </ul><ol class="toc"> <li><div><a href="rationale.html">Rationale</a></div><ul class="outline"> <li> <a href="rationale.html#Purely+functional+AWS+library">Purely functional AWS library </a> </li><li> <a href="rationale.html#Modular">Modular </a> </li> </ul></li><li><div><a href="dynamodb.html">DynamoDB</a></div><ul class="outline"> <li> <a href="dynamodb.html#Install">Install </a> </li><li> <a href="dynamodb.html#Use">Use </a> </li> </ul><ol class="toc">  </ol></li><li><div><a href="structure.html">Structure</a></div><ul class="outline"> <li> <a href="structure.html#Services">Services </a> </li> </ul></li><li><div><a href="dynamodb.html">DynamoDB</a></div><ul class="outline"> <li> <a href="dynamodb.html#Install">Install </a> </li><li> <a href="dynamodb.html#Use">Use </a> </li> </ul><ol class="toc">  </ol></li><li class="generated"><div class="current">Contents in Depth</div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
+      <div><a href="index.html">wookie</a></div><ol class="toc"> <li><div><a href="rationale.html">Rationale</a></div></li><li><div><a href="dynamodb.html">DynamoDB</a></div><ol class="toc">  </ol></li><li><div class="current">Structure</div></li><li><div><a href="dynamodb.html">DynamoDB</a></div><ol class="toc">  </ol></li><li class="generated"><div><a href="Contents+in+Depth.html">Contents in Depth</a></div></li><li class="generated"><div><a href="Combined+Pages.html">Combined Pages</a></div></li> </ol></div></div>
           </div>
         </div>
         <div class="header">
@@ -52,7 +70,7 @@
         <div class="span-16 prepend-1 append-1">
           <div class="span-16 top nav">
             <div class="span-16 title">
-              <span>wookie</span> — Contents in Depth
+              <span>wookie</span> — Structure
             </div>
           </div>
         </div>
