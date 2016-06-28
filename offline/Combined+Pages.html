@@ -59,8 +59,8 @@ all the operations we want to have in an abstract syntax tree that will be
 evaluated by our interpreter upon our request.
 </p><h2 id="Modular">Modular<a href="#Modular" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Wookie lets you use the HTTP client of your choice. There are interpreters for
 the following clients:
-- [akka-http][akka-http]
-</p><p>But you can implement your own! You just need to implement a function like
+</p><ul><li><a href="https://akka.io">akka-http</a>
+</li></ul><p>But you can implement your own! You just need to implement a function like
 follows:
 </p><pre><code class="prettyprint lang-scala">def interpret[A](op: DynamoDBOp[A]): Future[A]
 </code></pre><h1 id="DynamoDB">DynamoDB<a href="#DynamoDB" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><h2 id="Install">Install<a href="#Install" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>In order to use DynamoDB, you need to add <code>wookie-dynamodb</code> artifact to your

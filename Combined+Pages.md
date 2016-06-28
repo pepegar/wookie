@@ -49,6 +49,7 @@ Modular
 -------
 Wookie lets you use the HTTP client of your choice. There are interpreters for
 the following clients:
+
 - [akka-http][akka-http]
 
 But you can implement your own! You just need to implement a function like
@@ -58,7 +59,7 @@ follows:
 def interpret[A](op: DynamoDBOp[A]): Future[A]
 ```
 
-[akka-aws]: http://github.com/sclasen/akka-aws
+[akka-http]: https://akka.io
 
 
 
