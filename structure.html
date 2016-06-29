@@ -24,7 +24,9 @@
         <script type="text/javascript">
           Pamflet.page.language = 'en';
         </script>
-        
+        <script type="text/javascript" src="js/prettify/prettify.js"></script><script type="text/javascript" src="js/prettify/lang-scala.js"></script><link type="text/css" rel="stylesheet" href="css/prettify.css"/><script type="text/javascript"><!--
+        window.onload=function() { prettyPrint(); };
+      --></script>
         <link rel="stylesheet" href="css/custom.css" type="text/css" media="screen, projection"/>
         
         
@@ -39,8 +41,10 @@
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <h1 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><p>We’ve tried to follow an homogeneous structure through all the project.
-</p><h2 id="Services">Services<a href="#Services" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><ul><li>Each service is a different artifact
+            <h2 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Wookie is structure in services, and clients.  Services are representations of
+Services in AWS.  Clients are HTTP clients that evaluates <code>Request</code>s and
+transform them into responses in the target monad.
+</p><h3 id="Services">Services<a href="#Services" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Each service is a different artifact
 </li><li>each one of them provide the following packages:
 </li><li><code>ast</code> which contains the Algebraic Data Type of the service. this algebraic
 data type contains all operations that can be done to the given service.
@@ -52,7 +56,14 @@ into the target <code>Monad</code>.
 </li><li><code>implicits</code> contains all the implicits related to the underlying <code>aws-java</code>
 project.  All our services calls need a <code>Marshaller[Request[A], A]</code>, where <code>A</code>
 is our request type, and a response handler.
-</li></ul><div class="bottom nav span-16">
+</li></ul><h3 id="HTTP+Clients">HTTP Clients<a href="#HTTP+Clients" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There are several HTTP clients already provided in Wookie:
+</p><ul><li><a href="https://akka.io">akka-http</a>
+</li></ul><p>However, it is really simple to implement a new http client, you just need to
+implement the following interface:
+</p><pre><code class="prettyprint lang-scala">trait HttpClient {
+  def exec[A, B](request: Request[A])(implicit H: HttpResponseHandler[AmazonWebServiceResponse[B]]): Future[B]
+}
+</code></pre><div class="bottom nav span-16">
                         <em>Next Page</em>
                         <span class="arrow">❧</span>
                         <a href="dynamodb.html"> DynamoDB </a>                        

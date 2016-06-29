@@ -1,14 +1,13 @@
 
 
 wookie
-======
+------
 
 wookie is a library for using [Amazon Web Services](https://aws.amazon.com/es/)
 services from Scala.
 
 
-add to your project
--------------------
+### Add wookie to your project
 
 ```
 "io.pepegar.gihub" %% "wookie-core" % "0.1-SNAPSHOT"
@@ -27,8 +26,7 @@ So, for example, if you want to use DynamoDB,
 "io.pepegar.gihub" %% "wookie-dynamodb" % "0.1-SNAPSHOT"
 ```
 
-Currently implemented services
-------------------------------
+### Currently implemented services
 
 Currently we have implementation for:
 
@@ -37,16 +35,14 @@ Currently we have implementation for:
 
 
 Rationale
-=========
+---------
 
-Purely functional AWS library
------------------------------
+### Purely functional AWS library
 Wookie is based in free monads and interpreters.  With this approach we can have
 all the operations we want to have in an abstract syntax tree that will be
 evaluated by our interpreter upon our request.
 
-Modular
--------
+### Modular
 Wookie lets you use the HTTP client of your choice. There are interpreters for
 the following clients:
 
@@ -100,12 +96,14 @@ val result = DynamoDB(props).run(listTables)
 
 
 Structure
-========
+---------
 
-We've tried to follow an homogeneous structure through all the project.
+Wookie is structure in services, and clients.  Services are representations of
+Services in AWS.  Clients are HTTP clients that evaluates `Request`s and
+transform them into responses in the target monad.
 
-Services
---------
+### Services
+
 * Each service is a different artifact
 * each one of them provide the following packages:
   * `ast` which contains the Algebraic Data Type of the service. this algebraic
@@ -119,13 +117,27 @@ Services
   project.  All our services calls need a `Marshaller[Request[A], A]`, where `A`
   is our request type, and a response handler.
 
+### HTTP Clients
+
+There are several HTTP clients already provided in Wookie:
+
+* [akka-http](https://akka.io)
+
+However, it is really simple to implement a new http client, you just need to
+implement the following interface:
+
+```scala
+trait HttpClient {
+  def exec[A, B](request: Request[A])(implicit H: HttpResponseHandler[AmazonWebServiceResponse[B]]): Future[B]
+}
+```
+
 
 
 DynamoDB
-========
+--------
 
-Install
--------
+### Install
 In order to use DynamoDB, you need to add `wookie-dynamodb` artifact to your
 `build.sbt` file.
 
@@ -133,8 +145,7 @@ In order to use DynamoDB, you need to add `wookie-dynamodb` artifact to your
 "io.github.pepegar" %% "wookie-dynamodb" % "0.1-SNAPSHOT"
 ```
 
-Use
----
+### Use
 You can use the `Ops` typeclass, located in `language` package.  It provides 
 convenient functions to generate request values for DynamoDB.
 
