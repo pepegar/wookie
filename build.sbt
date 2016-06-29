@@ -51,9 +51,6 @@ lazy val core = project
   .in(file("wookie-core"))
   .settings(commonSettings)
   .settings(libraryDependencies := dependencies)
-  .settings(libraryDependencies ++= Seq(
-    "com.typesafe.akka" %% "akka-http-core" % "2.4.7",
-    "com.typesafe.akka" %% "akka-http-experimental" % "2.4.7"))
 
 lazy val dynamodb = project
   .in(file("wookie-dynamodb"))
@@ -65,6 +62,15 @@ lazy val s3 = project
   .in(file("wookie-s3"))
   .settings(commonSettings)
   .settings(libraryDependencies := dependencies)
+  .dependsOn(core)
+
+lazy val akkahttp = project
+  .in(file("client/akka-http"))
+  .settings(commonSettings)
+  .settings(libraryDependencies := dependencies)
+  .settings(libraryDependencies ++= Seq(
+    "com.typesafe.akka" %% "akka-http-core" % "2.4.7",
+    "com.typesafe.akka" %% "akka-http-experimental" % "2.4.7"))
   .dependsOn(core)
 
 lazy val docsSettings = commonSettings ++ ghpages.settings ++ tutSettings ++ Seq(
