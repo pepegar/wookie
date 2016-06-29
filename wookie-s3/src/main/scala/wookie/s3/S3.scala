@@ -2,18 +2,20 @@ package wookie
 package s3
 
 import scala.concurrent.Future
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
+
 import com.amazonaws.transform._
 import com.amazonaws._
 import com.amazonaws.auth.BasicAWSCredentials
 
-import service._
+import cats.~>
+import cats.data.Kleisli
 
-case class S3(props: Properties) extends Service {
+import service._
+import httpclient._
+
+case class S3(props: Properties, client: HttpClient) extends Service {
 
   import ast._
-  import interpreter._
   import result._
   import signer._
   import marshallable._
@@ -27,12 +29,17 @@ case class S3(props: Properties) extends Service {
     props.secretAccessKey
   )
 
-  def run[A](op: S3Monad[A])(implicit
-    system: ActorSystem,
-    mat: ActorMaterializer): Future[A] = {
-    val result = op foldMap s3Interpreter(endpoint)
+  def run[A](op: S3Monad[A]): Future[A] = {
+    val result = op foldMap s3Interpreter
 
     result.run(Signer[A](endpoint, serviceName, credentials))
+  }
+
+  val s3Interpreter = new (S3Op ~> Result) {
+    def apply[A](command: S3Op[A]): Result[A] =
+      Kleisli { signer: Signer[A] =>
+        client.exec(signer.sign(command.req))(command.responseHandler)
+      }
   }
 
 }
