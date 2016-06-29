@@ -58,43 +58,6 @@ def interpret[A](op: DynamoDBOp[A]): Future[A]
 [akka-http]: https://akka.io
 
 
-
-DynamoDB
-========
-
-Install
--------
-In order to use DynamoDB, you need to add `wookie-dynamodb` artifact to your
-`build.sbt` file.
-
-```
-"io.github.pepegar" %% "wookie-dynamodb" % "0.1-SNAPSHOT"
-```
-
-Use
----
-You can use the `Ops` typeclass, located in `language` package.  It provides 
-convenient functions to generate request values for DynamoDB.
-
-```scala
-import wookie.dynamodb.implicits._
-import wookie.dynamodb.language.Ops
-import wookie.dynamodb.DynamoDB
-import wookie.service.Properties
-import com.amazonaws.services.dynamodbv2.model.ListTablesRequest
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-
-val props = Properties("accessKey", "secretAccessKey")
-implicit val system = ActorSystem("wookie")
-implicit val mat = ActorMaterializer()
-
-val listTables = Ops.listTables(new ListTablesRequest)
-
-val result = DynamoDB(props).run(listTables)
-```
-
-
 Structure
 ---------
 

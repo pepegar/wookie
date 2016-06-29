@@ -43,7 +43,7 @@
       <a name="toc"></a>
       <h4 class="toctitle">Contents</h4>
       <div class="tocbody">
-      <div><a href="#wookie">wookie</a></div><ol class="toc"> <li><div><a href="#Rationale">Rationale</a></div></li><li><div><a href="#DynamoDB">DynamoDB</a></div><ol class="toc">  </ol></li><li><div><a href="#Structure">Structure</a></div></li><li><div><a href="#DynamoDB">DynamoDB</a></div><ol class="toc">  </ol></li> </ol></div></div><h2 id="wookie">wookie<a href="#wookie" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>wookie is a library for using <a href="https://aws.amazon.com/es/">Amazon Web Services</a>
+      <div><a href="#wookie">wookie</a></div><ol class="toc"> <li><div><a href="#Rationale">Rationale</a></div></li><li><div><a href="#Structure">Structure</a></div></li><li><div><a href="#DynamoDB">DynamoDB</a></div><ol class="toc">  </ol></li> </ol></div></div><h2 id="wookie">wookie<a href="#wookie" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>wookie is a library for using <a href="https://aws.amazon.com/es/">Amazon Web Services</a>
 services from Scala.
 </p><h3 id="Add+wookie+to+your+project">Add wookie to your project<a href="#Add+wookie+to+your+project" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><pre><code class="">&quot;io.pepegar.gihub&quot; %% &quot;wookie-core&quot; % &quot;0.1-SNAPSHOT&quot;
 </code></pre><p>Each one of the AWS Services are in its own isolated project, and they follow
@@ -63,26 +63,6 @@ the following clients:
 </li></ul><p>But you can implement your own! You just need to implement a function like
 follows:
 </p><pre><code class="prettyprint lang-scala">def interpret[A](op: DynamoDBOp[A]): Future[A]
-</code></pre><h1 id="DynamoDB">DynamoDB<a href="#DynamoDB" class="header-link"><span class="header-link-content">&nbsp;</span></a></h1><h2 id="Install">Install<a href="#Install" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>In order to use DynamoDB, you need to add <code>wookie-dynamodb</code> artifact to your
-<code>build.sbt</code> file.
-</p><pre><code class="">&quot;io.github.pepegar&quot; %% &quot;wookie-dynamodb&quot; % &quot;0.1-SNAPSHOT&quot;
-</code></pre><h2 id="Use">Use<a href="#Use" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>You can use the <code>Ops</code> typeclass, located in <code>language</code> package.  It provides 
-convenient functions to generate request values for DynamoDB.
-</p><pre><code class="prettyprint lang-scala">import wookie.dynamodb.implicits._
-import wookie.dynamodb.language.Ops
-import wookie.dynamodb.DynamoDB
-import wookie.service.Properties
-import com.amazonaws.services.dynamodbv2.model.ListTablesRequest
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-
-val props = Properties(&quot;accessKey&quot;, &quot;secretAccessKey&quot;)
-implicit val system = ActorSystem(&quot;wookie&quot;)
-implicit val mat = ActorMaterializer()
-
-val listTables = Ops.listTables(new ListTablesRequest)
-
-val result = DynamoDB(props).run(listTables)
 </code></pre><h2 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Wookie is structure in services, and clients.  Services are representations of
 Services in AWS.  Clients are HTTP clients that evaluates <code>Request</code>s and
 transform them into responses in the target monad.
