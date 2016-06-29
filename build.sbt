@@ -40,13 +40,6 @@ ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 
-lazy val wookie = project
-  .settings(Seq(
-    publish := (),
-    publishLocal := (),
-    publishArtifact := false))
-  .aggregate(core, dynamodb, s3)
-
 lazy val core = project
   .in(file("wookie-core"))
   .settings(commonSettings)
