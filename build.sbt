@@ -55,7 +55,7 @@ lazy val s3 = project
   .dependsOn(core)
 
 lazy val akkahttp = project
-  .in(file("client/akka-http"))
+  .in(file("client/wookie-akka-http"))
   .settings(commonSettings)
   .settings(libraryDependencies := dependencies)
   .settings(libraryDependencies ++= Seq(
