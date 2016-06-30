@@ -37,7 +37,7 @@ case class S3(props: Properties, client: HttpClient) extends Service {
 
   val s3Interpreter = new (S3Op ~> Result) {
     def apply[A](command: S3Op[A]): Result[A] =
-      Kleisli { signer: Signer[A] =>
+      Kleisli { signer: Signer[A] ⇒
         client.exec(signer.sign(command.req))(command.responseHandler)
       }
   }

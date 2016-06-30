@@ -19,7 +19,7 @@ import akka.stream.scaladsl._
 import akka.util.{ ByteString, Timeout }
 
 import com.amazonaws.auth._
-import com.amazonaws.http.{ HttpMethodName, HttpResponseHandler, HttpResponse => AWSHttpResponse }
+import com.amazonaws.http.{ HttpMethodName, HttpResponseHandler, HttpResponse ⇒ AWSHttpResponse }
 import com.amazonaws.{ AmazonServiceException, AmazonWebServiceResponse, DefaultRequest, Request }
 
 import scala.collection.JavaConverters._
@@ -63,18 +63,18 @@ object http {
     } else {
       val method: HttpMethod = request.getHttpMethod
       method match {
-        case HttpMethods.POST => {
+        case HttpMethods.POST ⇒ {
           headers(request) match {
-            case Nil => Post(path, formData(request))
-            case x :: xs => Post(path, formData(request)) ~> addHeaders(x, xs: _*)
+            case Nil     ⇒ Post(path, formData(request))
+            case x :: xs ⇒ Post(path, formData(request)) ~> addHeaders(x, xs: _*)
           }
         }
-        case HttpMethods.PUT =>
+        case HttpMethods.PUT ⇒
           headers(request) match {
-            case Nil => Put(path, formData(request))
-            case x :: xs => Put(path, formData(request)) ~> addHeaders(x, xs: _*)
+            case Nil     ⇒ Put(path, formData(request))
+            case x :: xs ⇒ Put(path, formData(request)) ~> addHeaders(x, xs: _*)
           }
-        case method =>
+        case method ⇒
           val uri = Uri(path = Uri.Path(path)).withRawQueryString(encodeQuery(request))
           HttpRequest(method, uri, headers(request))
       }
@@ -84,21 +84,21 @@ object http {
   def sendRequest(req: HttpRequest)(
     implicit
     system: ActorSystem,
-    mat: ActorMaterializer
+    mat:    ActorMaterializer
   ): Future[HttpResponse] = Http().singleRequest(req)
 
   def parseResponse[T](serviceName: String, response: HttpResponse)(
     implicit
     handler: HttpResponseHandler[AmazonWebServiceResponse[T]],
-    system: ActorSystem,
-    mat: ActorMaterializer
+    system:  ActorSystem,
+    mat:     ActorMaterializer
   ): Future[AmazonServiceException Xor T] = {
     implicit val ec = system.dispatcher
     val req = new DefaultRequest[T](serviceName)
     val awsResp = new AWSHttpResponse(req, null)
     val futureBs: Future[ByteString] = response.entity.toStrict(timeout.duration).map { _.data }
 
-    futureBs map { bs =>
+    futureBs map { bs ⇒
       awsResp.setContent(new ByteArrayInputStream(bs.toArray))
       awsResp.setStatusCode(response.status.intValue)
       awsResp.setStatusText(response.status.defaultMessage)
@@ -108,7 +108,7 @@ object http {
         Xor.Right(resp)
       } else {
         response.headers.foreach {
-          h => awsResp.addHeader(h.name, h.value)
+          h ⇒ awsResp.addHeader(h.name, h.value)
         }
         Xor.Left(errorResponseHandler.handle(awsResp))
       }
@@ -126,25 +126,25 @@ object http {
 
   private[this] def headers(req: Request[_]): List[HttpHeader] = {
     req.getHeaders.asScala.map {
-      case (k: String, v: String) =>
+      case (k: String, v: String) ⇒
         RawHeader(k, v)
     }.toList
   }
 
   private[this] def encodeQuery[T](awsReq: Request[T]) =
     awsReq.getParameters.asScala.toList.map({
-      case (k, v) => s"${awsURLEncode(k)}=${awsURLEncode(v)}"
+      case (k, v) ⇒ s"${awsURLEncode(k)}=${awsURLEncode(v)}"
     }).mkString("&")
 
-  private[this] def awsURLEncode(s: String) = Option(s).map(ss => URLEncoder.encode(ss, "UTF-8")).getOrElse("")
+  private[this] def awsURLEncode(s: String) = Option(s).map(ss ⇒ URLEncoder.encode(ss, "UTF-8")).getOrElse("")
 
   import HttpMethods._
   implicit def bridgeMethods(m: HttpMethodName): HttpMethod = m match {
-    case HttpMethodName.POST => POST
-    case HttpMethodName.GET => GET
-    case HttpMethodName.PUT => PUT
-    case HttpMethodName.DELETE => DELETE
-    case HttpMethodName.HEAD => HEAD
-    case HttpMethodName.PATCH => PATCH
+    case HttpMethodName.POST   ⇒ POST
+    case HttpMethodName.GET    ⇒ GET
+    case HttpMethodName.PUT    ⇒ PUT
+    case HttpMethodName.DELETE ⇒ DELETE
+    case HttpMethodName.HEAD   ⇒ HEAD
+    case HttpMethodName.PATCH  ⇒ PATCH
   }
 }

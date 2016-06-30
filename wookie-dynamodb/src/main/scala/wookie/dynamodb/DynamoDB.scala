@@ -35,7 +35,7 @@ case class DynamoDB(props: Properties, client: HttpClient) extends Service {
 
   val dynamoDBInterpreter = new (DynamoDBOp ~> Result) {
     def apply[A](command: DynamoDBOp[A]): Result[A] =
-      Kleisli { signer: Signer[A] =>
+      Kleisli { signer: Signer[A] ⇒
         client.exec(signer.sign(command.req))(command.responseHandler)
       }
   }

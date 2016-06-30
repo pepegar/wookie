@@ -19,11 +19,11 @@ object implicits {
       request.setHttpMethod(httpMethod)
       request.addHeader("x-amz-content-sha256", "required")
 
-      originalRequest.getClass.getMethods.find(_.getName == "getBucketName").map { method =>
+      originalRequest.getClass.getMethods.find(_.getName == "getBucketName").map { method ⇒
         val bucketName: String = method.invoke(originalRequest).asInstanceOf[String]
         request.setResourcePath(s"/${bucketName}")
 
-        originalRequest.getClass.getMethods.find(_.getName == "getKey").map { method =>
+        originalRequest.getClass.getMethods.find(_.getName == "getKey").map { method ⇒
           val key: String = method.invoke(originalRequest).asInstanceOf[String]
           request.setResourcePath(s"/${bucketName}/${key}")
         }
@@ -47,11 +47,11 @@ object implicits {
         throw new Exception("File upload not supported")
       } else {
         import scala.collection.JavaConversions._
-        request.getHeaders.putAll(putObject.getMetadata.getRawMetadata.map { case (k, v) => k -> v.toString })
-        request.getHeaders.putAll(putObject.getMetadata.getUserMetadata.map { case (k, v) => s"${Headers.S3_USER_METADATA_PREFIX}-$k" -> v })
+        request.getHeaders.putAll(putObject.getMetadata.getRawMetadata.map { case (k, v) ⇒ k → v.toString })
+        request.getHeaders.putAll(putObject.getMetadata.getUserMetadata.map { case (k, v) ⇒ s"${Headers.S3_USER_METADATA_PREFIX}-$k" → v })
         Option(putObject.getRedirectLocation).foreach(request.getHeaders.put(Headers.REDIRECT_LOCATION, _))
         Option(putObject.getStorageClass).foreach(request.getHeaders.put(Headers.STORAGE_CLASS, _))
-        Option(putObject.getCannedAcl).foreach(acl => request.getHeaders.put(Headers.S3_CANNED_ACL, acl.toString))
+        Option(putObject.getCannedAcl).foreach(acl ⇒ request.getHeaders.put(Headers.S3_CANNED_ACL, acl.toString))
         // TODO, handle putObject.getAccessControlList, cf: http://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectPUT.html
         request.setContent(putObject.getInputStream)
         request
@@ -68,7 +68,7 @@ object implicits {
       Option(listObjects.getPrefix).foreach(request.addParameter("prefix", _))
       Option(listObjects.getMarker).foreach(request.addParameter("marker", _))
       Option(listObjects.getDelimiter).foreach(request.addParameter("delimiter", _))
-      Option(listObjects.getMaxKeys).foreach(maxKeys => request.addParameter("max-keys", maxKeys.toString))
+      Option(listObjects.getMaxKeys).foreach(maxKeys ⇒ request.addParameter("max-keys", maxKeys.toString))
       Option(listObjects.getEncodingType).foreach(request.addParameter("encoding-type", _))
       request
     }

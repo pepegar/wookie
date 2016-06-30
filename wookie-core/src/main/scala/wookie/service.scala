@@ -7,7 +7,7 @@ object service {
   }
 
   case class Properties(
-    accessKey: String,
+    accessKey:       String,
     secretAccessKey: String
   )
 }

@@ -8,7 +8,7 @@ val dependencies = Seq(
   "org.specs2" %% "specs2-core" % "3.8.4" % "test"
 )
 
-val commonSettings = Seq(
+val commonSettings = SbtScalariform.scalariformSettings ++ Seq(
   organization := "io.github.pepegar",
   version := "0.1-SNAPSHOT",
   scalaVersion := "2.11.8",
@@ -25,20 +25,17 @@ val commonSettings = Seq(
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-value-discard"
-  )
-)
-
-scalacOptions in Test ++= Seq("-Yrangepos")
-
-SbtScalariform.scalariformSettings
-
-ScalariformKeys.preferences := ScalariformKeys.preferences.value
+  ),
+  ScalariformKeys.preferences := ScalariformKeys.preferences.value
   .setPreference(RewriteArrowSymbols, true)
   .setPreference(AlignParameters, true)
   .setPreference(AlignSingleLineCaseStatements, true)
   .setPreference(DoubleIndentClassDeclaration, true)
   .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
   .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+)
+
+scalacOptions in Test ++= Seq("-Yrangepos")
 
 lazy val core = project
   .in(file("wookie-core"))
