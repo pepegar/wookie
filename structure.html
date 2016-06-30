@@ -41,7 +41,7 @@
           </a>
         <div class="container contentswrapper">
           <div class="span-16 prepend-1 append-1 contents">
-            <h2 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p>Wookie is structure in services, and clients.  Services are representations of
+            <h2 id="Structure">Structure<a href="#Structure" class="header-link"><span class="header-link-content">&nbsp;</span></a></h2><p><strong>wookie</strong> is structure in services, and clients.  Services are representations of
 Services in AWS.  Clients are HTTP clients that evaluates <code>Request</code>s and
 transform them into responses in the target monad.
 </p><h3 id="Services">Services<a href="#Services" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><ul><li>Each service is a different artifact
@@ -56,7 +56,7 @@ into the target <code>Monad</code>.
 </li><li><code>implicits</code> contains all the implicits related to the underlying <code>aws-java</code>
 project.  All our services calls need a <code>Marshaller[Request[A], A]</code>, where <code>A</code>
 is our request type, and a response handler.
-</li></ul><h3 id="HTTP+Clients">HTTP Clients<a href="#HTTP+Clients" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There are several HTTP clients already provided in Wookie:
+</li></ul><h3 id="HTTP+Clients">HTTP Clients<a href="#HTTP+Clients" class="header-link"><span class="header-link-content">&nbsp;</span></a></h3><p>There are several HTTP clients already provided in <strong>wookie</strong>:
 </p><ul><li><a href="https://akka.io">akka-http</a>
 </li></ul><p>However, it is really simple to implement a new http client, you just need to
 implement the following interface:

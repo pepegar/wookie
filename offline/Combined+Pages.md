@@ -3,7 +3,7 @@
 wookie
 ------
 
-wookie is a library for using [Amazon Web Services](https://aws.amazon.com/es/)
+**wookie** is a library for using [Amazon Web Services](https://aws.amazon.com/es/)
 services from Scala.
 
 
@@ -38,12 +38,12 @@ Rationale
 ---------
 
 ### Purely functional AWS library
-Wookie is based in free monads and interpreters.  With this approach we can have
+**wookie** is based in free monads and interpreters.  With this approach we can have
 all the operations we want to have in an abstract syntax tree that will be
 evaluated by our interpreter upon our request.
 
 ### Modular
-Wookie lets you use the HTTP client of your choice. There are interpreters for
+**wookie** lets you use the HTTP client of your choice. There are interpreters for
 the following clients:
 
 - [akka-http][akka-http]
@@ -61,7 +61,7 @@ def interpret[A](op: DynamoDBOp[A]): Future[A]
 Structure
 ---------
 
-Wookie is structure in services, and clients.  Services are representations of
+**wookie** is structure in services, and clients.  Services are representations of
 Services in AWS.  Clients are HTTP clients that evaluates `Request`s and
 transform them into responses in the target monad.
 
@@ -82,7 +82,7 @@ transform them into responses in the target monad.
 
 ### HTTP Clients
 
-There are several HTTP clients already provided in Wookie:
+There are several HTTP clients already provided in **wookie**:
 
 * [akka-http](https://akka.io)
 
