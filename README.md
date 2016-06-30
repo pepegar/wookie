@@ -38,7 +38,7 @@ libraryDependencies += "io.github.pepegar" %% "wookie-akka-http" % "0.1-SNAPSHOT
 **wookie** is inspired in several projects out there.
 
 * [doobie][doobie] principled DB access for Scala.
-* [fetch][fetch] efficient data access for Scala. 
+* [fetch][fetch] efficient data access for Scala.
 
 [docs]: https://pepegar.github.io/wookie
 [free monads]: http://typelevel.org/cats/tut/freemonad.html
