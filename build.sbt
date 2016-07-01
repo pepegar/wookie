@@ -81,3 +81,11 @@ lazy val docs = (project in file("docs"))
     publishLocal := (),
     publishArtifact := false))
   .dependsOn(core, dynamodb, s3)
+
+lazy val gen = (project in file("wookie-gen"))
+  .settings(Seq(
+    publish := (),
+    publishLocal := (),
+    publishArtifact := false))
+  .settings(commonSettings)
+  .settings(libraryDependencies ++= dependencies)
