@@ -5,7 +5,7 @@ import com.amazonaws.Request
 
 object signer {
 
-  trait Signer[A] {
+  trait Signer {
     def endpoint: String
 
     def serviceName: String
@@ -28,7 +28,7 @@ object signer {
 
   object Signer {
 
-    def apply[A](e: String, n: String, c: AWSCredentials): Signer[A] = new Signer[A] {
+    def apply(e: String, n: String, c: AWSCredentials): Signer = new Signer {
       def endpoint = e
       def serviceName = n
       def credentials = c
