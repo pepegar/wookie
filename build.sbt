@@ -40,24 +40,24 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 lazy val core = project
   .in(file("wookie-core"))
   .settings(commonSettings)
-  .settings(libraryDependencies := dependencies)
+  .settings(libraryDependencies ++= dependencies)
 
 lazy val dynamodb = project
   .in(file("wookie-dynamodb"))
   .settings(commonSettings)
-  .settings(libraryDependencies := dependencies)
+  .settings(libraryDependencies ++= dependencies)
   .dependsOn(core)
 
 lazy val s3 = project
   .in(file("wookie-s3"))
   .settings(commonSettings)
-  .settings(libraryDependencies := dependencies)
+  .settings(libraryDependencies ++= dependencies)
   .dependsOn(core)
 
 lazy val akkahttp = project
   .in(file("client/wookie-akka-http"))
   .settings(commonSettings)
-  .settings(libraryDependencies := dependencies)
+  .settings(libraryDependencies ++= dependencies)
   .settings(libraryDependencies ++= Seq(
     "com.typesafe.akka" %% "akka-http-core" % "2.4.7",
     "com.typesafe.akka" %% "akka-http-experimental" % "2.4.7"))
