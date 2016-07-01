@@ -3,8 +3,8 @@ package wookie
 import com.amazonaws.http.HttpResponseHandler
 import com.amazonaws.AmazonWebServiceResponse
 
-object marshallable {
-  trait Marshallable[A] {
+object handler {
+  trait Handler[A] {
     def responseHandler: HttpResponseHandler[AmazonWebServiceResponse[A]]
   }
 }
