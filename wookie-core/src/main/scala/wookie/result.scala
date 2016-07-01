@@ -9,7 +9,7 @@ object result {
   import signer._
   import Kleisli._
 
-  type Result[A] = Kleisli[Future, Signer[A], A]
+  type Result[A] = Kleisli[Future, Signer, A]
 
   implicit val resultMonad: Monad[Result] = implicitly
 }
