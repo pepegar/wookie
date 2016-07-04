@@ -8,7 +8,7 @@ import scala.reflect.ClassTag
 
 case class Service(
   name:       String,
-  operations: Map[Class[_], Class[_]]
+  operations: List[(Class[_], Class[_])]
 )
 
 case class CodeGen(service: Service) {
@@ -227,7 +227,7 @@ case class CodeGen(service: Service) {
 
 object Generator extends App {
 
-  val dynamodb = Service("DynamoDB", Map(
+  val dynamodb = Service("DynamoDB", List(
     classOf[ListTablesRequest] → classOf[ListTablesResult],
     classOf[QueryRequest] → classOf[QueryResult],
     classOf[ScanRequest] → classOf[ScanResult],
@@ -243,7 +243,7 @@ object Generator extends App {
     classOf[DeleteItemRequest] → classOf[DeleteItemResult]
   ))
 
-  val s3 = Service("S3", Map(
+  val s3 = Service("S3", List(
     classOf[ListBucketsRequest] → classOf[java.util.List[Bucket]],
     classOf[CreateBucketRequest] → classOf[Unit],
     classOf[DeleteBucketRequest] → classOf[Unit],
