@@ -2,6 +2,7 @@ package wookie
 package gen
 
 import com.amazonaws.services.dynamodbv2.model._
+import com.amazonaws.services.s3.model._
 import java.lang.reflect._
 import scala.reflect.ClassTag
 
@@ -10,26 +11,10 @@ case class Service(
   operations: Map[Class[_], Class[_]]
 )
 
-object dynamodb extends Service("DynamoDB", Map(
-  classOf[ListTablesRequest] → classOf[ListTablesResult],
-  classOf[QueryRequest] → classOf[QueryResult],
-  classOf[ScanRequest] → classOf[ScanResult],
-  classOf[UpdateItemRequest] → classOf[UpdateItemResult],
-  classOf[PutItemRequest] → classOf[PutItemResult],
-  classOf[DescribeTableRequest] → classOf[DescribeTableResult],
-  classOf[CreateTableRequest] → classOf[CreateTableResult],
-  classOf[UpdateTableRequest] → classOf[UpdateTableResult],
-  classOf[DeleteTableRequest] → classOf[DeleteTableResult],
-  classOf[GetItemRequest] → classOf[GetItemResult],
-  classOf[BatchWriteItemRequest] → classOf[BatchWriteItemResult],
-  classOf[BatchGetItemRequest] → classOf[BatchGetItemResult],
-  classOf[DeleteItemRequest] → classOf[DeleteItemResult]
-))
+case class CodeGen(service: Service) {
 
-class FreeGen(service: Service) {
-
-  val managed: List[Class[_]] = service.operations.map(_._1).toList
-  val results: List[Class[_]] = service.operations.map(_._2).toList
+  val managed = service.operations.map(_._1)
+  val results = service.operations.map(_._2)
 
   // These Java classes will have non-Java names in our generated code
   val ClassBoolean = classOf[Boolean]
@@ -78,9 +63,12 @@ class FreeGen(service: Service) {
     def mname: String =
       origin.getDeclaringClass.getSimpleName
 
+    def scname: String =
+      mname(0).toLower +: mname.drop(1)
+
     // The case class constructor name, capitalized and with an index when needed
     def cname: String = {
-      val s = mname(0).toUpper +: mname.drop(1)
+      val s = (mname(0).toUpper +: mname.drop(1)).replaceAll("Request", "")
       (if (index == 0) s else s"$s$index")
     }
 
@@ -88,9 +76,11 @@ class FreeGen(service: Service) {
     def cparams: List[String] =
       origin.getGenericParameterTypes.toList.map(toScalaType)
 
+    val letters = "abcdefghijklmnopqrstuvwxyz"
+
     // Constructor arguments, a .. z zipped with the right type
     def cargs: List[String] =
-      "abcdefghijklmnopqrstuvwxyz".toList.zip(cparams).map {
+      letters.toList.zip(cparams).map {
         case (n, t) ⇒ s"$n: $t"
       }
 
@@ -99,15 +89,16 @@ class FreeGen(service: Service) {
 
     // Case class/object declaration
     def ctor(sname: String): String =
-      ("|case " + (cparams match {
-        case Nil ⇒ s"object $cname"
-        case ps  ⇒ s"class $cname(${cargs.mkString(", ")})"
-      }) + s""" extends ${service.name}Op[$ret] {
+      (s"""
+        |case class $cname(${cargs.mkString(", ")})(implicit M: Marshaller[Request[$mname], $mname])
+        |      extends ${service.name}Op[$ret] {
+        |      def amzReq = new $mname(${letters.take(cargs.length).mkString(", ")})
+        |      def marshalledReq = M.marshall(amzReq)
         |    }""").trim.stripMargin
 
     // Argument list: a, b, c, ... up to the proper arity
     def args: String =
-      "abcdefghijklmnopqrstuvwxyz".toList.take(cparams.length).mkString(", ")
+      letters.toList.take(cparams.length).mkString(", ")
 
     // Pattern to match the constructor
     def pat: String =
@@ -126,20 +117,24 @@ class FreeGen(service: Service) {
     // Smart constructor
     def lifted(sname: String): String =
       if (cargs.isEmpty) {
-        s"""|/** 
-            |   * @group Constructors (Primitives)
-            |   */
-            |  val $mname: ${sname}IO[$ret] =
-            |    F.liftFC(${cname})
+        s"""|  def $scname: ${service.name}IO[$ret] =
+            |        F.liftF(${cname}())
          """.trim.stripMargin
       } else {
-        s"""|/** 
-            |   * @group Constructors (Primitives)
-            |   */
-            |  def $mname(${cargs.mkString(", ")}): ${sname}IO[$ret] =
-            |    F.liftFC(${cname}($args))
+        s"""|  def $scname(${cargs.mkString(", ")}): ${service.name}IO[$ret] =
+            |        F.liftF(${cname}($args))
          """.trim.stripMargin
       }
+
+    def liftedSignature(sname: String): String = {
+      if (cargs.isEmpty) {
+        s"""|  def $scname: P[$ret]
+         """.trim.stripMargin
+      } else {
+        s"""|  def $scname(${cargs.mkString(", ")}): P[$ret]
+         """.trim.stripMargin
+      }
+    }
 
   }
 
@@ -174,15 +169,51 @@ class FreeGen(service: Service) {
     |package ${service.name.toLowerCase}
     |
     |${service.operations.flatMap(tup ⇒ imports(ClassTag(tup._1), tup._2)).toList.distinct.sorted.mkString("\n")}
+    |import ${service.name.toLowerCase}.implicits._
     |
-    |object ast {
+    |import cats.free.{Free => F}
     |
-    |  sealed trait ${service.name}Op[A] extends Product with Serializable
+    |object algebra {
+    |
+    |  type ${service.name}IO[A] = F[${service.name}Op, A]
+    |
+    |  sealed trait ${service.name}Op[A]
+    |    extends Handler[A]
+    |    with Product with Serializable {
+    |    def marshalledReq: Request[_]
+    |  }
     |
     |  object ${service.name}Op {
-    |    ${service.operations.map(tup ⇒ constructorsForClass(ClassTag(tup._1), tup._2)).mkString}
+    |
+    |${service.operations.map(tup ⇒ constructorsForClass(ClassTag(tup._1), tup._2)).mkString}
     |  }
+    |
+    |  object ops {
+    |
+    |    trait ${service.name}Ops[P[_]]{
+    |${service.operations.map(tup ⇒ smartConstructorSignatures(ClassTag(tup._1), tup._2)).mkString}
+    |    }
+    |
+    |    object ${service.name}Ops extends ${service.name}Ops[${service.name}IO]{
+    |${service.operations.map(tup ⇒ smartConstructors(ClassTag(tup._1), tup._2)).mkString}
+    |    }
+    |  }
+    |
     |}
+    |""".trim.stripMargin
+  }
+
+  def smartConstructors[A, B](implicit request: ClassTag[A], result: Class[B]): String = {
+    val sname = toScalaType(request.runtimeClass)
+    s"""
+    |    ${ctors[A, B].map(_.lifted(sname)).mkString("\n    ")}
+    |""".trim.stripMargin
+  }
+
+  def smartConstructorSignatures[A, B](implicit request: ClassTag[A], result: Class[B]): String = {
+    val sname = toScalaType(request.runtimeClass)
+    s"""
+    |    ${ctors[A, B].map(_.liftedSignature(sname)).mkString("\n    ")}
     |""".trim.stripMargin
   }
 
@@ -194,9 +225,34 @@ class FreeGen(service: Service) {
   }
 }
 
-object Generator extends FreeGen(dynamodb) with App {
+object Generator extends App {
 
-  println(module)
+  val dynamodb = Service("DynamoDB", Map(
+    classOf[ListTablesRequest] → classOf[ListTablesResult],
+    classOf[QueryRequest] → classOf[QueryResult],
+    classOf[ScanRequest] → classOf[ScanResult],
+    classOf[UpdateItemRequest] → classOf[UpdateItemResult],
+    classOf[PutItemRequest] → classOf[PutItemResult],
+    classOf[DescribeTableRequest] → classOf[DescribeTableResult],
+    classOf[CreateTableRequest] → classOf[CreateTableResult],
+    classOf[UpdateTableRequest] → classOf[UpdateTableResult],
+    classOf[DeleteTableRequest] → classOf[DeleteTableResult],
+    classOf[GetItemRequest] → classOf[GetItemResult],
+    classOf[BatchWriteItemRequest] → classOf[BatchWriteItemResult],
+    classOf[BatchGetItemRequest] → classOf[BatchGetItemResult],
+    classOf[DeleteItemRequest] → classOf[DeleteItemResult]
+  ))
+
+  val s3 = Service("S3", Map(
+    classOf[ListBucketsRequest] → classOf[java.util.List[Bucket]],
+    classOf[CreateBucketRequest] → classOf[Unit],
+    classOf[DeleteBucketRequest] → classOf[Unit],
+    classOf[PutObjectRequest] → classOf[ObjectMetadata],
+    classOf[GetObjectRequest] → classOf[S3Object],
+    classOf[DeleteObjectRequest] → classOf[Unit],
+    classOf[ListObjectsRequest] → classOf[ObjectListing]
+  ))
+
+  println(CodeGen(s3).module)
 
 }
-
