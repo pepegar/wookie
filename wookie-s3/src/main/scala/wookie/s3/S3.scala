@@ -12,13 +12,11 @@ import cats.data.Kleisli
 
 import service._
 import httpclient._
+import ast._
+import result._
+import signer._
 
 case class S3(props: Properties, client: HttpClient) extends Service {
-
-  import ast._
-  import result._
-  import signer._
-  import marshallable._
 
   val endpoint = "https://s3.amazonaws.com"
 
