@@ -12,7 +12,7 @@ import cats.data.Kleisli
 
 import service._
 import httpclient._
-import ast._
+import algebra._
 import result._
 import signer._
 
@@ -27,7 +27,7 @@ case class S3(props: Properties, client: HttpClient) extends Service {
     props.secretAccessKey
   )
 
-  def run[A](op: S3Monad[A]): Future[A] = {
+  def run[A](op: S3IO[A]): Future[A] = {
     val result = op foldMap s3Interpreter
 
     result.run(Signer(endpoint, serviceName, credentials))
@@ -36,7 +36,7 @@ case class S3(props: Properties, client: HttpClient) extends Service {
   val s3Interpreter = new (S3Op ~> Result) {
     def apply[A](command: S3Op[A]): Result[A] =
       Kleisli { signer: Signer ⇒
-        client.exec(signer.sign(command.req))(command.responseHandler)
+        client.exec(signer.sign(command.marshalledReq))(command.responseHandler)
       }
   }
 

@@ -33,6 +33,14 @@ And you might want to pull a client as well:
 libraryDependencies += "io.github.pepegar" %% "wookie-akka-http" % "0.1-SNAPSHOT"
 ```
 
+### CodeGen
+
+Inspired by [doobie][doobie], we are using code generation for writing algebras
+and typeclasses for different services.  This allows us to be much faster while
+creating services.
+
+You can learn more in [code-generation][code-generation]
+
 ### Inspiration
 
 **wookie** is inspired in several projects out there.
@@ -45,3 +53,4 @@ libraryDependencies += "io.github.pepegar" %% "wookie-akka-http" % "0.1-SNAPSHOT
 [clients]: https://pepegar.github.io/wookie/structure.html#HTTP+Clients
 [doobie]: https://github.com/tpolecat/doobie
 [fetch]: https://github.com/47deg/fetch
+[code-generation]: https://github.com/pepegar/wookie/blob/master/wookie-gen/README.md

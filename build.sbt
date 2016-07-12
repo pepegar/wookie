@@ -27,12 +27,12 @@ val commonSettings = SbtScalariform.scalariformSettings ++ Seq(
     "-Ywarn-value-discard"
   ),
   ScalariformKeys.preferences := ScalariformKeys.preferences.value
-  .setPreference(RewriteArrowSymbols, true)
-  .setPreference(AlignParameters, true)
-  .setPreference(AlignSingleLineCaseStatements, true)
-  .setPreference(DoubleIndentClassDeclaration, true)
-  .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+    .setPreference(RewriteArrowSymbols, true)
+    .setPreference(AlignParameters, true)
+    .setPreference(AlignSingleLineCaseStatements, true)
+    .setPreference(DoubleIndentClassDeclaration, true)
+    .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+    .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")
@@ -81,3 +81,11 @@ lazy val docs = (project in file("docs"))
     publishLocal := (),
     publishArtifact := false))
   .dependsOn(core, dynamodb, s3)
+
+lazy val gen = (project in file("wookie-gen"))
+  .settings(Seq(
+    publish := (),
+    publishLocal := (),
+    publishArtifact := false))
+  .settings(commonSettings)
+  .settings(libraryDependencies ++= dependencies)
