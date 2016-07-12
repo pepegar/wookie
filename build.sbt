@@ -27,12 +27,12 @@ val commonSettings = SbtScalariform.scalariformSettings ++ Seq(
     "-Ywarn-value-discard"
   ),
   ScalariformKeys.preferences := ScalariformKeys.preferences.value
-  .setPreference(RewriteArrowSymbols, true)
-  .setPreference(AlignParameters, true)
-  .setPreference(AlignSingleLineCaseStatements, true)
-  .setPreference(DoubleIndentClassDeclaration, true)
-  .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
-  .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
+    .setPreference(RewriteArrowSymbols, true)
+    .setPreference(AlignParameters, true)
+    .setPreference(AlignSingleLineCaseStatements, true)
+    .setPreference(DoubleIndentClassDeclaration, true)
+    .setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
+    .setPreference(PlaceScaladocAsterisksBeneathSecondAsterisk, true)
 )
 
 scalacOptions in Test ++= Seq("-Yrangepos")

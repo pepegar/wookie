@@ -26,9 +26,6 @@ case class CodeGen(service: Service) {
   val ClassDouble = classOf[Double]
   val ClassVoid = Void.TYPE
 
-  val renames: Map[Class[_], String] =
-    Map(classOf[java.sql.Array] → "SqlArray")
-
   def tparams(t: Type): List[String] =
     t match {
       case t: GenericArrayType  ⇒ tparams(t.getGenericComponentType)
@@ -52,7 +49,7 @@ case class CodeGen(service: Service) {
       case ClassFloat               ⇒ "Float"
       case ClassDouble              ⇒ "Double"
       case x: Class[_] if x.isArray ⇒ s"Array[${toScalaType(x.getComponentType)}]"
-      case x: Class[_]              ⇒ renames.getOrElse(x, x.getSimpleName)
+      case x: Class[_]              ⇒ x.getSimpleName
     }
 
   // Each constructor for our algebra maps to an underlying method, and an index is provided to
@@ -76,6 +73,11 @@ case class CodeGen(service: Service) {
     def cparams: List[String] =
       origin.getGenericParameterTypes.toList.map(toScalaType)
 
+    def ctparams: String = {
+      val ss = origin.getGenericParameterTypes.toList.flatMap(tparams).toSet
+      if (ss.isEmpty) "" else ss.mkString("[", ", ", "]")
+    }
+
     val letters = "abcdefghijklmnopqrstuvwxyz"
 
     // Constructor arguments, a .. z zipped with the right type
@@ -90,10 +92,11 @@ case class CodeGen(service: Service) {
     // Case class/object declaration
     def ctor(sname: String): String =
       (s"""
-        |case class $cname(${cargs.mkString(", ")})(implicit M: Marshaller[Request[$mname], $mname])
+        |case class $cname(${cargs.mkString(", ")})(implicit M: Marshaller[Request[$mname], $mname], RH: HttpResponseHandler[AmazonWebServiceResponse[$ret]])
         |      extends ${service.name}Op[$ret] {
         |      def amzReq = new $mname(${letters.take(cargs.length).mkString(", ")})
         |      def marshalledReq = M.marshall(amzReq)
+        |      def responseHandler = RH
         |    }""").trim.stripMargin
 
     // Argument list: a, b, c, ... up to the proper arity
@@ -118,11 +121,11 @@ case class CodeGen(service: Service) {
     def lifted(sname: String): String =
       if (cargs.isEmpty) {
         s"""|  def $scname: ${service.name}IO[$ret] =
-            |        F.liftF(${cname}())
+            |        Free.liftF(${cname}())
          """.trim.stripMargin
       } else {
         s"""|  def $scname(${cargs.mkString(", ")}): ${service.name}IO[$ret] =
-            |        F.liftF(${cname}($args))
+            |        Free.liftF(${cname}($args))
          """.trim.stripMargin
       }
 
@@ -152,30 +155,35 @@ case class CodeGen(service: Service) {
 
   // All types referenced by all constructors on A, superclasses, interfaces, etc.
   def imports[A, B](implicit request: ClassTag[A], returnType: Class[B]): List[String] =
-    (s"import ${request.runtimeClass.getName}" :: ctors.map(_.origin).flatMap { m ⇒
-      m.getDeclaringClass :: managed.toList.filterNot(_ == request.runtimeClass) ::: results.toList.filterNot(_ == returnType) ::: m.getParameterTypes.toList
+    (s"import ${request.runtimeClass.getPackage.getName}._" :: ctors.map(_.origin).flatMap { m ⇒
+      m.getDeclaringClass :: m.getParameterTypes.toList
     }.map { t ⇒
       if (t.isArray) t.getComponentType else t
-    }.filterNot(t ⇒ t.isPrimitive).map { c ⇒
-      val sn = c.getSimpleName
-      val an = renames.getOrElse(c, sn)
-      if (sn == an) s"import ${c.getName}"
-      else s"import ${c.getPackage.getName}.{ $sn => $an }"
-    }).distinct.sorted
+    }.filterNot(t ⇒ t.isPrimitive)
+      .filterNot(_.getPackage.getName == request.runtimeClass.getPackage.getName)
+      .map { c ⇒
+        s"import ${c.getName}"
+      }).distinct.sorted
 
   def module: String = {
     s"""
     |package wookie
     |package ${service.name.toLowerCase}
     |
+    |import com.amazonaws.http.HttpResponseHandler
+    |import com.amazonaws.AmazonWebServiceResponse
+    |import com.amazonaws.Request
+    |import com.amazonaws.transform.Marshaller
     |${service.operations.flatMap(tup ⇒ imports(ClassTag(tup._1), tup._2)).toList.distinct.sorted.mkString("\n")}
     |import ${service.name.toLowerCase}.implicits._
     |
-    |import cats.free.{Free => F}
+    |import cats.free.Free
     |
     |object algebra {
     |
-    |  type ${service.name}IO[A] = F[${service.name}Op, A]
+    |  import handler._
+    |
+    |  type ${service.name}IO[A] = Free[${service.name}Op, A]
     |
     |  sealed trait ${service.name}Op[A]
     |    extends Handler[A]
@@ -189,6 +197,8 @@ case class CodeGen(service: Service) {
     |  }
     |
     |  object ops {
+    |
+    |    import ${service.name}Op._
     |
     |    trait ${service.name}Ops[P[_]]{
     |${service.operations.map(tup ⇒ smartConstructorSignatures(ClassTag(tup._1), tup._2)).mkString}
@@ -227,32 +237,44 @@ case class CodeGen(service: Service) {
 
 object Generator extends App {
 
-  val dynamodb = Service("DynamoDB", List(
-    classOf[ListTablesRequest] → classOf[ListTablesResult],
-    classOf[QueryRequest] → classOf[QueryResult],
-    classOf[ScanRequest] → classOf[ScanResult],
-    classOf[UpdateItemRequest] → classOf[UpdateItemResult],
-    classOf[PutItemRequest] → classOf[PutItemResult],
-    classOf[DescribeTableRequest] → classOf[DescribeTableResult],
-    classOf[CreateTableRequest] → classOf[CreateTableResult],
-    classOf[UpdateTableRequest] → classOf[UpdateTableResult],
-    classOf[DeleteTableRequest] → classOf[DeleteTableResult],
-    classOf[GetItemRequest] → classOf[GetItemResult],
-    classOf[BatchWriteItemRequest] → classOf[BatchWriteItemResult],
-    classOf[BatchGetItemRequest] → classOf[BatchGetItemResult],
-    classOf[DeleteItemRequest] → classOf[DeleteItemResult]
-  ))
+  val service = args.toList match {
+    case module :: _ if module == "dynamodb" ⇒ Some(Service("DynamoDB", List(
+      classOf[ListTablesRequest] → classOf[ListTablesResult],
+      classOf[QueryRequest] → classOf[QueryResult],
+      classOf[ScanRequest] → classOf[ScanResult],
+      classOf[UpdateItemRequest] → classOf[UpdateItemResult],
+      classOf[PutItemRequest] → classOf[PutItemResult],
+      classOf[DescribeTableRequest] → classOf[DescribeTableResult],
+      classOf[CreateTableRequest] → classOf[CreateTableResult],
+      classOf[UpdateTableRequest] → classOf[UpdateTableResult],
+      classOf[DeleteTableRequest] → classOf[DeleteTableResult],
+      classOf[GetItemRequest] → classOf[GetItemResult],
+      classOf[BatchWriteItemRequest] → classOf[BatchWriteItemResult],
+      classOf[BatchGetItemRequest] → classOf[BatchGetItemResult],
+      classOf[DeleteItemRequest] → classOf[DeleteItemResult]
+    )))
+    case module :: _ if module == "s3" ⇒ Some(Service("S3", List(
+      classOf[ListBucketsRequest] → classOf[java.util.List[Bucket]],
+      classOf[CreateBucketRequest] → classOf[Unit],
+      classOf[DeleteBucketRequest] → classOf[Unit],
+      classOf[PutObjectRequest] → classOf[ObjectMetadata],
+      classOf[GetObjectRequest] → classOf[S3Object],
+      classOf[DeleteObjectRequest] → classOf[Unit],
+      classOf[ListObjectsRequest] → classOf[ObjectListing]
+    )))
+    case Nil ⇒ None
+  }
 
-  val s3 = Service("S3", List(
-    classOf[ListBucketsRequest] → classOf[java.util.List[Bucket]],
-    classOf[CreateBucketRequest] → classOf[Unit],
-    classOf[DeleteBucketRequest] → classOf[Unit],
-    classOf[PutObjectRequest] → classOf[ObjectMetadata],
-    classOf[GetObjectRequest] → classOf[S3Object],
-    classOf[DeleteObjectRequest] → classOf[Unit],
-    classOf[ListObjectsRequest] → classOf[ObjectListing]
-  ))
+  import java.io.PrintWriter
 
-  println(CodeGen(s3).module)
+  service
+    .map(s ⇒ (CodeGen(s), s.name))
+    .map(t ⇒ (t._1.module, t._2))
+    .foreach { t ⇒
+      val contents = t._1
+      val name = t._2
+
+      new PrintWriter(s"wookie-${name.toLowerCase}/src/main/scala/wookie/${name.toLowerCase}/algebra.scala") { write(contents); close }
+    }
 
 }

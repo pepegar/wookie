@@ -11,9 +11,9 @@ import cats.~>
 import cats.data.Kleisli
 
 import result._
+import algebra._
 import service._
 import language._
-import ast._
 import signer._
 import httpclient._
 
@@ -26,7 +26,7 @@ case class DynamoDB(props: Properties, client: HttpClient) extends Service {
 
   def credentials = new BasicAWSCredentials(props.accessKey, props.secretAccessKey)
 
-  def run[A](op: DynamoDBMonad[A]): Future[A] = {
+  def run[A](op: DynamoDBIO[A]): Future[A] = {
     val result = op foldMap dynamoDBInterpreter
 
     result.run(Signer(endpoint, serviceName, credentials))
@@ -35,7 +35,7 @@ case class DynamoDB(props: Properties, client: HttpClient) extends Service {
   val dynamoDBInterpreter = new (DynamoDBOp ~> Result) {
     def apply[A](command: DynamoDBOp[A]): Result[A] =
       Kleisli { signer: Signer ⇒
-        client.exec(signer.sign(command.req))(command.responseHandler)
+        client.exec(signer.sign(command.marshalledReq))(command.responseHandler)
       }
   }
 }
