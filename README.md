@@ -2,8 +2,9 @@ wookie
 ======
 
 [![Build Status](https://travis-ci.org/pepegar/wookie.svg?branch=master)](https://travis-ci.org/pepegar/wookie)
-
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/77df883f34e6426aaec93ed5ee6b88eb)](https://www.codacy.com/app/jl-garhdez/wookie?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pepegar/wookie&amp;utm_campaign=Badge_Coverage)
 <img alt="GHHHAAAAAAHAHHAHAAHAAAAAA" align=right src="chewbacca.jpg"/>
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/77df883f34e6426aaec93ed5ee6b88eb)](https://www.codacy.com/app/jl-garhdez/wookie?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=pepegar/wookie&amp;utm_campaign=Badge_Grade)
 
 **wookie** is a purely functional library for connecting to AWS with Scala.
 
