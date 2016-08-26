@@ -1,7 +1,7 @@
 package wookie
 
-import com.amazonaws.auth._
 import com.amazonaws.Request
+import com.amazonaws.auth._
 
 object signer {
 

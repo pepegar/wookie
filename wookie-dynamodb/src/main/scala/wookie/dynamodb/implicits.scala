@@ -1,12 +1,8 @@
 package wookie
 package dynamodb
 
-import com.amazonaws.services.dynamodbv2.model._
+import com.amazonaws.http.JsonResponseHandler
 import com.amazonaws.services.dynamodbv2.model.transform._
-import com.amazonaws.transform.{ JsonErrorUnmarshaller }
-import com.amazonaws.http.{ JsonErrorResponseHandler, JsonResponseHandler }
-import com.amazonaws.{ AmazonWebServiceRequest, Request }
-import com.amazonaws.transform.Marshaller
 
 object implicits {
   // gently stolen from sclasen/akka-aws

@@ -1,24 +1,19 @@
 package wookie
 package dynamodb
 
-import com.amazonaws.{ AmazonWebServiceRequest, Request }
-import com.amazonaws.transform.Marshaller
+import cats.data.Kleisli
+import cats.~>
 import com.amazonaws.auth.BasicAWSCredentials
+import wookie.dynamodb.algebra._
+import wookie.httpclient._
+import wookie.result._
+import wookie.service._
+import wookie.signer._
 
 import scala.concurrent.Future
-
-import cats.~>
-import cats.data.Kleisli
-
-import result._
-import algebra._
-import service._
-import language._
-import signer._
-import httpclient._
+import scala.language._
 
 case class DynamoDB(props: Properties, client: HttpClient) extends Service {
-  import cats.std.future._
 
   def endpoint = "https://dynamodb.us-east-1.amazonaws.com"
 

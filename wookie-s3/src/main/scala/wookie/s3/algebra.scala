@@ -1,19 +1,15 @@
 package wookie
 package s3
 
-import com.amazonaws.http.HttpResponseHandler
-import com.amazonaws.AmazonWebServiceResponse
-import com.amazonaws.Request
-import com.amazonaws.transform.Marshaller
-import com.amazonaws.services.s3.model._
-import java.io.File
-import java.io.InputStream
-import java.lang.Integer
-import java.lang.String
+import java.io.{ File, InputStream }
 import java.util.List
-import s3.implicits._
 
 import cats.free.Free
+import com.amazonaws.{ AmazonWebServiceResponse, Request }
+import com.amazonaws.http.HttpResponseHandler
+import com.amazonaws.services.s3.model._
+import com.amazonaws.transform.Marshaller
+import wookie.s3.implicits._
 
 object algebra {
 

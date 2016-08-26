@@ -1,11 +1,10 @@
 package wookie
 
-import org.specs2._
-import com.amazonaws.auth.{ Signer ⇒ AWSSigner, BasicAWSCredentials }
+import com.amazonaws.auth.{BasicAWSCredentials, Signer => AWSSigner}
 import com.amazonaws.services.dynamodbv2.model._
-import com.amazonaws.{ DefaultRequest, Request }
-
-import signer._
+import com.amazonaws.{DefaultRequest, Request}
+import org.specs2._
+import wookie.signer._
 
 class SignerSpec extends Specification {
   def is = s2"""

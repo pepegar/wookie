@@ -1,8 +1,7 @@
 package wookie
 
-import com.amazonaws.{ AmazonServiceException, AmazonWebServiceResponse, Request }
 import com.amazonaws.http.HttpResponseHandler
-import cats.MonadError
+import com.amazonaws.{ AmazonServiceException, AmazonWebServiceResponse, Request }
 
 import scala.concurrent.Future
 

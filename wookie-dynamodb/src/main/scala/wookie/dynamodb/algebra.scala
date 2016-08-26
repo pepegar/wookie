@@ -1,19 +1,15 @@
 package wookie
 package dynamodb
 
-import com.amazonaws.http.HttpResponseHandler
-import com.amazonaws.AmazonWebServiceResponse
-import com.amazonaws.Request
-import com.amazonaws.transform.Marshaller
-import com.amazonaws.services.dynamodbv2.model._
 import java.lang.Boolean
-import java.lang.Integer
-import java.lang.String
-import java.util.List
-import java.util.Map
-import dynamodb.implicits._
+import java.util.{ List, Map }
 
 import cats.free.Free
+import com.amazonaws.{ AmazonWebServiceResponse, Request }
+import com.amazonaws.http.HttpResponseHandler
+import com.amazonaws.services.dynamodbv2.model._
+import com.amazonaws.transform.Marshaller
+import wookie.dynamodb.implicits._
 
 object algebra {
 

@@ -1,9 +1,11 @@
 package wookie
 package gen
 
+import java.lang.reflect._
+
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.services.s3.model._
-import java.lang.reflect._
+
 import scala.reflect.ClassTag
 
 case class Service(
