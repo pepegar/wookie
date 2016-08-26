@@ -48,8 +48,6 @@ object client {
 
     val defaultContentType = "application/x-amz-json-1.0"
 
-    def errorResponseHandler: HttpResponseHandler[AmazonServiceException] = null
-
     private[this] def createHttpRequest[T](request: Request[T]): HttpRequest = {
       require(request.getEndpoint() != null, "Endpoint must be set")
 
@@ -101,7 +99,8 @@ object client {
 
     private[this] def parseResponse[T](serviceName: String, response: HttpResponse)(
       implicit
-      handler: HttpResponseHandler[AmazonWebServiceResponse[T]]
+      handler:              HttpResponseHandler[AmazonWebServiceResponse[T]],
+      errorResponseHandler: HttpResponseHandler[AmazonServiceException]
     ): Future[AmazonServiceException Xor T] = {
       implicit val ec = s.dispatcher
       val req = new DefaultRequest[T](serviceName)

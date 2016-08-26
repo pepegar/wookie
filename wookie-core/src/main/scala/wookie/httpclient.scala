@@ -11,8 +11,6 @@ object httpclient {
 
     def exec[A, B](request: Request[A])(implicit H: HttpResponseHandler[AmazonWebServiceResponse[B]]): Future[B]
 
-    def errorResponseHandler: HttpResponseHandler[AmazonServiceException]
-
   }
 
 }
