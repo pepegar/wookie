@@ -1,5 +1,4 @@
-package wookie
-package dynamodb
+package wookie.dynamodb
 
 import cats.data.Kleisli
 import cats.~>

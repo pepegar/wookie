@@ -1,10 +1,10 @@
-package wookie
-package gen
+package wookie.gen
 
 import java.lang.reflect._
 
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.services.s3.model._
+import com.amazonaws.services.sqs.model._
 
 import scala.reflect.ClassTag
 
@@ -263,6 +263,22 @@ object Generator extends App {
       classOf[GetObjectRequest] → classOf[S3Object],
       classOf[DeleteObjectRequest] → classOf[Unit],
       classOf[ListObjectsRequest] → classOf[ObjectListing]
+    )))
+    case module :: _ if module == "sqs" ⇒ Some(Service("SQS", List(
+      classOf[AddPermissionRequest] → classOf[Unit],
+      classOf[ChangeMessageVisibilityBatchRequest] → classOf[ChangeMessageVisibilityBatchResult],
+      classOf[CreateQueueRequest] → classOf[CreateQueueResult],
+      classOf[DeleteMessageBatchRequest] → classOf[DeleteMessageBatchResult],
+      classOf[DeleteMessageRequest] → classOf[Unit],
+      classOf[DeleteQueueRequest] → classOf[Unit],
+      classOf[GetQueueAttributesRequest] → classOf[GetQueueAttributesResult],
+      classOf[GetQueueUrlRequest] → classOf[GetQueueUrlResult],
+      classOf[ListDeadLetterSourceQueuesRequest] → classOf[ListDeadLetterSourceQueuesResult],
+      classOf[ListQueuesRequest] → classOf[ListQueuesResult],
+      classOf[ReceiveMessageRequest] → classOf[ReceiveMessageResult],
+      classOf[SendMessageBatchRequest] → classOf[SendMessageBatchResult],
+      classOf[SendMessageRequest] → classOf[SendMessageResult],
+      classOf[SetQueueAttributesRequest] → classOf[Unit]
     )))
     case Nil ⇒ None
   }

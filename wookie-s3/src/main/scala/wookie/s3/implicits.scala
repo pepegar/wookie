@@ -1,5 +1,4 @@
-package wookie
-package s3
+package wookie.s3
 
 import com.amazonaws.http.HttpMethodName
 import com.amazonaws.services.s3.Headers

@@ -55,6 +55,12 @@ lazy val s3 = project
   .settings(libraryDependencies ++= dependencies)
   .dependsOn(core)
 
+lazy val sqs = project
+  .in(file("wookie-sqs"))
+  .settings(commonSettings)
+  .settings(libraryDependencies ++= dependencies)
+  .dependsOn(core)
+
 lazy val akkahttp = project
   .in(file("client/wookie-akka-http"))
   .settings(commonSettings)
@@ -81,7 +87,7 @@ lazy val docs = (project in file("docs"))
     publish := (),
     publishLocal := (),
     publishArtifact := false))
-  .dependsOn(core, dynamodb, s3)
+  .dependsOn(core, dynamodb, s3, sqs)
 
 lazy val gen = (project in file("wookie-gen"))
   .settings(Seq(

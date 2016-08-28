@@ -1,5 +1,4 @@
-package wookie
-package s3
+package wookie.s3
 
 import java.io.{ File, InputStream }
 import java.util.List
@@ -9,6 +8,7 @@ import com.amazonaws.{ AmazonWebServiceResponse, Request }
 import com.amazonaws.http.HttpResponseHandler
 import com.amazonaws.services.s3.model._
 import com.amazonaws.transform.Marshaller
+import wookie.handler
 import wookie.s3.implicits._
 
 object algebra {

@@ -1,5 +1,4 @@
-package wookie
-package akkahttp
+package wookie.akkahttp
 
 import java.io.ByteArrayInputStream
 import java.net.URLEncoder

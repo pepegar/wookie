@@ -1,5 +1,4 @@
-package wookie
-package dynamodb
+package wookie.dynamodb
 
 import java.lang.Boolean
 import java.util.{ List, Map }
@@ -10,6 +9,7 @@ import com.amazonaws.http.HttpResponseHandler
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.transform.Marshaller
 import wookie.dynamodb.implicits._
+import wookie.handler
 
 object algebra {
 
