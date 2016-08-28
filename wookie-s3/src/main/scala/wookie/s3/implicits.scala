@@ -1,14 +1,13 @@
 package wookie
 package s3
 
-import com.amazonaws.services.s3.model._
 import com.amazonaws.http.HttpMethodName
-import com.amazonaws.services.s3.model.transform.Unmarshallers
-import com.amazonaws.services.s3.internal.{ Constants, S3XmlResponseHandler }
 import com.amazonaws.services.s3.Headers
+import com.amazonaws.services.s3.internal._
+import com.amazonaws.services.s3.model._
+import com.amazonaws.services.s3.model.transform.Unmarshallers
 import com.amazonaws.transform.Marshaller
 import com.amazonaws.{ AmazonWebServiceRequest, DefaultRequest, Request }
-import com.amazonaws.services.s3.internal.{ S3ErrorResponseHandler, S3MetadataResponseHandler, S3ObjectResponseHandler }
 
 object implicits {
   // As well here, this is gently stolen from sclasen/akka-aws
@@ -78,4 +77,7 @@ object implicits {
 
   implicit val objectU = new S3ObjectResponseHandler()
   implicit val voidU = new S3XmlResponseHandler[Unit](null)
+
+  implicit val errorResponseHandler = new S3ErrorResponseHandler
+
 }

@@ -1,20 +1,18 @@
 package wookie
 package s3
 
+import cats.data.Kleisli
+import cats.~>
+import com.amazonaws.auth.BasicAWSCredentials
+import wookie.httpclient._
+import wookie.result._
+import wookie.s3.algebra._
+import wookie.service._
+import wookie.signer._
+
 import scala.concurrent.Future
 
-import com.amazonaws.transform._
-import com.amazonaws._
-import com.amazonaws.auth.BasicAWSCredentials
-
-import cats.~>
-import cats.data.Kleisli
-
-import service._
-import httpclient._
-import algebra._
-import result._
-import signer._
+import implicits._
 
 case class S3(props: Properties, client: HttpClient) extends Service {
 
@@ -36,7 +34,7 @@ case class S3(props: Properties, client: HttpClient) extends Service {
   val s3Interpreter = new (S3Op ~> Result) {
     def apply[A](command: S3Op[A]): Result[A] =
       Kleisli { signer: Signer ⇒
-        client.exec(signer.sign(command.marshalledReq))(command.responseHandler)
+        client.exec(signer.sign(command.marshalledReq))(command.responseHandler, errorResponseHandler)
       }
   }
 

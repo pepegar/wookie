@@ -1,12 +1,11 @@
 package wookie
 package dynamodb
 
-import com.amazonaws.services.dynamodbv2.model._
-import com.amazonaws.services.dynamodbv2.model.transform._
-import com.amazonaws.transform.{ JsonErrorUnmarshaller }
+import collection.JavaConversions._
+
 import com.amazonaws.http.{ JsonErrorResponseHandler, JsonResponseHandler }
-import com.amazonaws.{ AmazonWebServiceRequest, Request }
-import com.amazonaws.transform.Marshaller
+import com.amazonaws.services.dynamodbv2.model.transform._
+import com.amazonaws.transform.JsonErrorUnmarshaller
 
 object implicits {
   // gently stolen from sclasen/akka-aws
@@ -36,4 +35,16 @@ object implicits {
   implicit val deU = new JsonResponseHandler(DeleteTableResultJsonUnmarshaller.getInstance())
   implicit val getM = new GetItemRequestMarshaller()
   implicit val getU = new JsonResponseHandler(GetItemResultJsonUnmarshaller.getInstance())
+
+  implicit val errorResponseHandler = new JsonErrorResponseHandler(dynamoExceptionUnmarshallers)
+
+  val dynamoExceptionUnmarshallers = List[JsonErrorUnmarshaller](
+    new LimitExceededExceptionUnmarshaller(),
+    new InternalServerErrorExceptionUnmarshaller(),
+    new ProvisionedThroughputExceededExceptionUnmarshaller(),
+    new ResourceInUseExceptionUnmarshaller(),
+    new ConditionalCheckFailedExceptionUnmarshaller(),
+    new ResourceNotFoundExceptionUnmarshaller(),
+    new JsonErrorUnmarshaller()
+  )
 }
