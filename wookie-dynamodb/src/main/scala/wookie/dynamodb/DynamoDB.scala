@@ -13,6 +13,8 @@ import wookie.signer._
 import scala.concurrent.Future
 import scala.language._
 
+import implicits._
+
 case class DynamoDB(props: Properties, client: HttpClient) extends Service {
 
   def endpoint = "https://dynamodb.us-east-1.amazonaws.com"
@@ -30,7 +32,7 @@ case class DynamoDB(props: Properties, client: HttpClient) extends Service {
   val dynamoDBInterpreter = new (DynamoDBOp ~> Result) {
     def apply[A](command: DynamoDBOp[A]): Result[A] =
       Kleisli { signer: Signer ⇒
-        client.exec(signer.sign(command.marshalledReq))(command.responseHandler)
+        client.exec(signer.sign(command.marshalledReq))(command.responseHandler, errorResponseHandler)
       }
   }
 }

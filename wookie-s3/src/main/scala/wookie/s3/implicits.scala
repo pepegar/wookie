@@ -3,7 +3,7 @@ package s3
 
 import com.amazonaws.http.HttpMethodName
 import com.amazonaws.services.s3.Headers
-import com.amazonaws.services.s3.internal.{ Constants, S3MetadataResponseHandler, S3ObjectResponseHandler, S3XmlResponseHandler }
+import com.amazonaws.services.s3.internal._
 import com.amazonaws.services.s3.model._
 import com.amazonaws.services.s3.model.transform.Unmarshallers
 import com.amazonaws.transform.Marshaller
@@ -77,4 +77,7 @@ object implicits {
 
   implicit val objectU = new S3ObjectResponseHandler()
   implicit val voidU = new S3XmlResponseHandler[Unit](null)
+
+  implicit val errorResponseHandler = new S3ErrorResponseHandler
+
 }

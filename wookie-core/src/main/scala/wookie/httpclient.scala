@@ -9,7 +9,11 @@ object httpclient {
 
   trait HttpClient {
 
-    def exec[A, B](request: Request[A])(implicit H: HttpResponseHandler[AmazonWebServiceResponse[B]]): Future[B]
+    def exec[A, B](request: Request[A])(
+      implicit
+      H:  HttpResponseHandler[AmazonWebServiceResponse[B]],
+      EH: HttpResponseHandler[AmazonServiceException]
+    ): Future[B]
 
   }
 

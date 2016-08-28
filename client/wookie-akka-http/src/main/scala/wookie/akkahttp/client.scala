@@ -34,7 +34,11 @@ object client {
     implicit val m = mat.getOrElse(ActorMaterializer())
     implicit val e = ec.getOrElse(ExecutionContext.Implicits.global)
 
-    def exec[A, B](request: Request[A])(implicit H: HttpResponseHandler[AmazonWebServiceResponse[B]]): Future[B] = {
+    def exec[A, B](request: Request[A])(
+      implicit
+      H:  HttpResponseHandler[AmazonWebServiceResponse[B]],
+      EH: HttpResponseHandler[AmazonServiceException]
+    ): Future[B] = {
       for {
         httpResponse ← sendRequest(createHttpRequest(request))
         marshalledResponse ← parseResponse(request.getServiceName, httpResponse)
@@ -156,7 +160,6 @@ object client {
       case HttpMethodName.HEAD   ⇒ HEAD
       case HttpMethodName.PATCH  ⇒ PATCH
     }
-
   }
 
 }
